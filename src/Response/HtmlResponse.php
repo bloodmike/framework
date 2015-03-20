@@ -314,7 +314,6 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
      */
     public function setLessCompiled($lessCompiled) {
         $this->lessCompiled = $lessCompiled;
-        var_dump($this->lessCompiled);
         return $this;
     }
     
