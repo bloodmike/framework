@@ -2,6 +2,7 @@
 
 namespace Framework\Response;
 
+use Framework\Response\Head\StylesheetInterface;
 use Framework\View\PreparableInterface;
 use WM\View\Widget\Statics\DebugOut;
 
@@ -114,6 +115,11 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
      */
     private $lessCompiled = false;
     
+	/**
+	 * @var StylesheetInterface[]
+	 */
+	private $stylesheets = [];
+	
     /**
      * @param int $code
      */
@@ -145,9 +151,8 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
                 <title><?=$this->getTitle();?></title>
                 
                 <?
-                $this->drawLESS();
+                $this->drawStylesheets();
                 $this->drawJS();
-                $this->drawCSS();
                 ?>
             </head>
             <body<?$this->drawBodyAttrs();?>><?
@@ -170,7 +175,13 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
      * @return static
      */
     public function addCSS($css, $plain = false) {
-        $this->css[] = [$css, $plain];
+		if ($plain) {
+			$this->stylesheets[] = new Head\CssPlain($css);
+		}
+		else {
+			$this->stylesheets[] = new Head\CssFile($css);
+		}
+		
         return $this;
     }
     
@@ -191,13 +202,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
      * @return static
      */
     public function addLESS($less) {
-        if ($this->lessCompiled) {
-            $this->addCSS($less);
-        }
-        else {
-            $this->less[$less] = true;
-        }
-        
+		$this->stylesheets[] = new Head\LessFile($less);
         return $this;
     }
     
@@ -405,28 +410,17 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
      * @param string $href
      * @param string $type
      */
-    private final function drawLink($rel, $href, $type) {
+    public final function drawLink($rel, $href, $type) {
         echo '<link rel="' . $rel . '"' . ($type ? ' type="' . $type . '"' : '') . ' href="' . htmlspecialchars($href) . '" />' . PHP_EOL;
     }
     
     /**
      * 
      */
-    private final function drawCSS() {
-		$versionSuffix = '';
-		
-		if ($this->buildNumber != '') {
-			$versionSuffix = '?' . $this->buildNumber;
+    private final function drawStylesheets() {
+		foreach ($this->stylesheets as $stylesheet) {
+			$stylesheet->draw($this);
 		}
-		
-        foreach ($this->css as $cssBlock) {
-            if ($cssBlock[1]) {
-                echo "<style>" . $cssBlock[0] . "</style>" . PHP_EOL;
-            }
-            else {
-                echo '<link rel="stylesheet" href="' . $this->getCSSFilePath($cssBlock[0], $versionSuffix) . '" />' . PHP_EOL;
-            }
-        }
     }
     
     /**
@@ -447,15 +441,6 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
             else {
                 echo '<script src="' . $this->getJSFilePath($jsBlock[0], $versionSuffix) . '"' . ($jsBlock[2] !== null ? ' charset="' . $jsBlock[2] . '"' : '') . '></script>' . PHP_EOL;
             }
-        }
-    }
-    
-    /**
-     * 
-     */
-    private final function drawLESS() {
-        foreach (array_keys($this->less) as $lessHref) {
-            $this->drawLink("stylesheet/less", '/i/less/' . $lessHref . '.less', 'text/css');
         }
     }
     
@@ -589,6 +574,22 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
         return $this->errors;
     }
     
+	/**
+	 * @return bool
+	 */
+	public function getLessCompiled() {
+		return $this->lessCompiled;
+	} 
+	
+	/**
+	 * @return string
+	 */
+	public function getBuildNumber() {
+		return $this->buildNumber;
+	}
+	
+	/**
+	
 	/**
 	 * @return array
 	 */
