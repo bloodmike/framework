@@ -133,6 +133,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     public function show() {
         http_response_code($this->statusCode);
         
+		// :TODO: убрать
         if (count($this->less) > 0) {
             $this->addJS("less = { env: 'development' }", true);
 			$this->addJS("less.min");
