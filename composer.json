@@ -1,0 +1,17 @@
+{
+    "name": "bloodmikeru/framework",
+    "description": "Фреймворк для личных проектов",
+    "authors": [
+        {
+            "name": "Mikhail P. Koshkin",
+            "email": "bloodmike.ru@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+
+    },	
+	"require-dev": {
+		"phpunit/phpunit": "4.5.*"
+	}
+}
