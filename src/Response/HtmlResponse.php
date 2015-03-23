@@ -2,9 +2,13 @@
 
 namespace Framework\Response;
 
+use Framework\Response\Head\CssFile;
+use Framework\Response\Head\CssPlain;
+use Framework\Response\Head\LessFile;
 use Framework\Response\Head\StylesheetInterface;
+use Framework\Service\Container;
 use Framework\View\PreparableInterface;
-use WM\View\Widget\Statics\DebugOut;
+use Framework\View\DebugOut;
 
 /**
  * Description of HtmlResponse
@@ -164,7 +168,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
         </html>
         <?
         if (filter_input(INPUT_COOKIE, self::DEBUG_KEY) == self::DEBUG_VALUE) {
-            echo DebugOut::html();
+            echo DebugOut::html(Container::$inst);
         } 
     }
     
@@ -177,10 +181,10 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
      */
     public function addCSS($css, $plain = false) {
 		if ($plain) {
-			$this->stylesheets[] = new Head\CssPlain($css);
+			$this->stylesheets[] = new CssPlain($css);
 		}
 		else {
-			$this->stylesheets[] = new Head\CssFile($css);
+			$this->stylesheets[] = new CssFile($css);
 		}
 		
         return $this;
@@ -203,7 +207,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
      * @return static
      */
     public function addLESS($less) {
-		$this->stylesheets[] = new Head\LessFile($less);
+		$this->stylesheets[] = new LessFile($less);
         return $this;
     }
     
