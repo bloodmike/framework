@@ -23,17 +23,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     /**
      * @var array
      */
-    private $css = [];
-    
-    /**
-     * @var array
-     */
-    private $js = [];
-    
-    /**
-     * @var array
-     */
-    private $less = [];
+    private $javascripts = [];
     
     /**
      * @var array
@@ -121,10 +111,54 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
 	private $stylesheets = [];
 	
     /**
+     * @var string путь, по которому располагаются файлы стилей проекта
+     */
+    private $stylesheetsPath = '/i/css/';
+    
+    /**
+     * @var string путь, по которому располагаются js-файлы проекта
+     */
+    private $javascriptsPath = '/i/js/';
+    
+    /**
      * @param int $code
      */
     public function __construct($code = 200) {
         $this->statusCode = $code;
+    }
+    
+    /**
+     * @param string $path
+     * 
+     * @return $this
+     */
+    public function setStylesheetsPath($path) {
+        $this->stylesheetsPath = $path;
+        return $this;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getStylesheetsPath() {
+        return $this->stylesheetsPath;
+    }
+    
+    /**
+     * @param string $path
+     * 
+     * @return $this
+     */
+    public function setJavascriptsPath($path) {
+        $this->javascriptsPath = $path;
+        return $this;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getJavascriptsPath() {
+        return $this->javascriptsPath;
     }
     
     /**
@@ -238,17 +272,11 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
      * @return static
      */
     public function addJS($js, $plain = false, $charset = null) {
-        //if ($plain || !defined('JS_COMPILED') || !JS_COMPILED || count($this->js) == 0) {
-            $this->js[] = [$js, $plain, $charset];
-        //}
-        //else {
-        //    $this->js[''] = array(JS_COMPILED_NAME, false, null);
-        //}
+        $this->javascripts[] = [$js, $plain, $charset];
         return $this;
     }
     
     /**
-     * 
      * @param string $rel
      * @param string $href
      * 
@@ -435,7 +463,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
 			$versionSuffix = '?' . $this->buildNumber;
 		}
 		
-        foreach ($this->js as $jsBlock) {
+        foreach ($this->javascripts as $jsBlock) {
             if ($jsBlock[1]) {
                 echo '<script>' . $jsBlock[0] . '</script>' . PHP_EOL;
             }
@@ -455,28 +483,11 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
         $prefix = "";
         $postfix = "";
         if (strpos($jsfile, "/") !== 0 && strpos($jsfile, "http") !== 0 && strpos($jsfile, "https") !== 0) {
-            $prefix = "/i/js/";
+            $prefix = $this->getJavascriptsPath();
             $postfix = ".js" . $versionSuffix;
         }
         
         return $prefix . $jsfile . $postfix;
-    }
-    
-    /**
-     * 
-     * @param string $cssfile
-	 * @param string $versionSuffix
-     * @return string
-     */
-    protected function getCSSFilePath($cssfile, $versionSuffix) {
-        $prefix = "";
-        $postfix = "";
-        if (strpos($cssfile, "/") !== 0 && strpos($cssfile, "http") !== 0 && strpos($cssfile, "https") !== 0) {
-            $prefix = "/i/css/";
-            $postfix = ".css" . $versionSuffix;
-        }
-        
-        return $prefix . $cssfile . $postfix;
     }
     
     /**

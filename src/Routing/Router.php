@@ -29,6 +29,11 @@ class Router {
     private $container;
     
     /**
+     * @var string
+     */
+    private $projectRootPrefix;
+    
+    /**
      * @param string[]  $domains
      * @param Container $container
      */
@@ -36,6 +41,10 @@ class Router {
         $this->routes = [];
         $this->domains = $domains;
         $this->container = $container;
+        $this->projectRootPrefix = '';
+        if ($container->hasParameter('root_prefix')) {
+            $this->projectRootPrefix = $container->getParameter('root_prefix');
+        }
     }
     
     /**
@@ -48,6 +57,10 @@ class Router {
             if (!is_array($routeData)) {
                 continue;
             }
+            if ($this->projectRootPrefix != ''){
+                $routeData['uri'] = $this->projectRootPrefix . (array_key_exists('uri', $routeData) ? '' : $routeData['uri']);
+            }
+            
             $this->routes[$routeName] = Route::createFromArray($routeName, $routeData, $this->domains);
         }
         

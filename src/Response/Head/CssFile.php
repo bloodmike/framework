@@ -32,7 +32,7 @@ class CssFile implements StylesheetInterface {
 		$prefix = "";
         $postfix = "";
         if (strpos($this->path, "/") !== 0 && strpos($this->path, "http") !== 0 && strpos($this->path, "https") !== 0) {
-            $prefix = "/i/css/";
+            $prefix = $htmlResponse->getStylesheetsPath();
             $postfix = ".css" . ($versionSuffix != '' ? '?' . $versionSuffix : '');
 		}
 		
