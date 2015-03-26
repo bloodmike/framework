@@ -124,6 +124,11 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
      */
     private $javascriptsPath = '/i/js/';
     
+	/**
+	 * @var string 
+	 */
+	private $rootPrefix  = '';
+    
     /**
      * @param int $code
      */
@@ -147,6 +152,23 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     public function getStylesheetsPath() {
         return $this->stylesheetsPath;
     }
+    
+	/**
+	 * @param string $rootPrefix
+	 * 
+	 * @return $this
+	 */
+	public function setRootPrefix($rootPrefix) {
+		$this->rootPrefix = $rootPrefix;
+		return $this;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getRootPrefix() {
+		return $this->rootPrefix;
+	}
     
     /**
      * @param string $path
