@@ -470,18 +470,18 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     }
     
     /**
-     * 
+     * Отрисовка всех вложенных в ответ стилей
      */
-    private final function drawStylesheets() {
+    protected function  drawStylesheets() {
 		foreach ($this->stylesheets as $stylesheet) {
 			$stylesheet->draw($this);
 		}
     }
     
     /**
-     * 
+     * Отрисовка всех вложенных в ответ жаваскриптов
      */
-    private final function drawJS() {
+    protected function drawJS() {
 		
 		$versionSuffix = '';
 		
