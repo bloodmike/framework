@@ -17,9 +17,9 @@ class Route {
     private $name = '';
     
     /**
-     * @var array[string]
+     * @var string[]
      */
-    private $parameters = [];
+    private $parameters = array();
     
     /**
      * @var string 
@@ -98,7 +98,7 @@ class Route {
         }
         $route->domain = $domains[$domainName];
         
-        $partsTo = [];
+        $partsTo = array();
         preg_match_all('/\[([\da-z_]+)\]/ui', $route->uri, $partsTo);
         foreach ($partsTo[1] as $part) {
             $route->parameters[] = $part;
@@ -133,7 +133,7 @@ class Route {
         }
         
         $routeResult = null;
-        $resultTo = [];
+        $resultTo = array();
         if (preg_match($regexp, $path, $resultTo)) {
             // если переданный путь соврадает с шаблоном
             $parameters = [];

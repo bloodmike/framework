@@ -36,7 +36,7 @@ abstract class Filter {
      * @return  array,\string
      */
     public function getJoinsArr($tableShort) {
-        return [];
+        return array();
     }
     
     /**
@@ -55,7 +55,7 @@ abstract class Filter {
      * @return  array,\string массив условий для WHERE запроса
      */
     public function getWhereArr($tableShort) {
-        return [];
+        return array();
     }
     
     /**

@@ -67,7 +67,7 @@ class DBLoader {
      */
     public function loadByKeys(DBStorable $obj, array $keys) {
         if ($this->db !== null && count($keys) > 0) {
-            $a = [];
+            $a = array();
             foreach ($keys as $k => $v) {
                 $a[] = "`$k`='" . $this->db->escape_string($v) . "'";
             }
@@ -90,7 +90,7 @@ class DBLoader {
      */
     public function loadAndReturnByKeys(DBStorable $obj, array $keys) {
         if ($this->db !== null && count($keys) > 0) {
-            $a = [];
+            $a = array();
             foreach ($keys as $k => $v) {
                 $a[] = "`$k`='" . $this->db->escape_string($v) . "'";
             }
@@ -112,7 +112,6 @@ class DBLoader {
 	 * @return DBStorable
 	 */
 	public function fetchWithPrefix(DBStorable $object, array &$sourceRow, $classPrefix = '') {
-		
 		$vars = array_keys(get_object_vars($object));
 		
 		foreach ($vars as $varName) {

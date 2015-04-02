@@ -38,7 +38,7 @@ class Router {
      * @param Container $container
      */
     public function __construct(array $domains, Container $container) {
-        $this->routes = [];
+        $this->routes = array();
         $this->domains = $domains;
         $this->container = $container;
         $this->projectRootPrefix = '';
@@ -102,7 +102,7 @@ class Router {
      * 
      * @throws InvalidArgumentException
      */
-    public function generate($routeName, array $parameters = [], $withDomain = false) {
+    public function generate($routeName, array $parameters = array(), $withDomain = false) {
         if (!array_key_exists($routeName, $this->routes)) {
             throw new InvalidArgumentException('Не найдена ссылка [' . $routeName . ']');
         }

@@ -28,6 +28,6 @@ class JsonResponse implements ResponseInterface {
      * @inheritdoc
      */
     public function show() {
-        echo json_encode($this->data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($this->data);
     }
 }

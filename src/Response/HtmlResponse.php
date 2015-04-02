@@ -27,37 +27,37 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     /**
      * @var array
      */
-    private $javascripts = [];
+    private $javascripts = array();
     
     /**
      * @var array
      */
-    private $htmlBefore = [];
+    private $htmlBefore = array();
     
     /**
      * @var array
      */
-    private $htmlAfter = [];
+    private $htmlAfter = array();
     
     /**
      * @var array
      */
-    private $links = [];
+    private $links = array();
     
     /**
      * @var array
      */
-    private $meta = [];
+    private $meta = array();
     
     /**
      * @var array
      */
-    private $metaProperty = [];
+    private $metaProperty = array();
         
     /**
      * @var string[]
      */
-    private $title = [];
+    private $title = array();
     
     /**
      * @var string
@@ -67,7 +67,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     /**
      * @var string[]
      */
-    private $bodyAttrs = [];
+    private $bodyAttrs = array();
     
     /**
      * @var string
@@ -77,17 +77,17 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     /**
      * @var string[]
      */
-    private $errors = [];
+    private $errors = array();
     
     /**
      * @var string[]
      */
-    private $messages = [];
+    private $messages = array();
 	
     /**
      * @var array
      */
-    private $customData = [];
+    private $customData = array();
     
     /**
      * @var bool

@@ -125,7 +125,7 @@ class DB extends mysqli {
      */
     public function fetchAll($query, $keyColumn = '') {
         $r = $this->select($query);
-        $result = [];
+        $result = array();
         
         for ($i = 0; $i < $r->num_rows; $i++) {
             $row = $r->fetch_assoc();
@@ -166,7 +166,7 @@ class DB extends mysqli {
         $a = null;
         
         if ($result !== false) {
-            $a = [];
+            $a = array();
             for ($i = 0; $i < $result->num_rows; $i++) {
                 $row = $result->fetch_array(MYSQLI_NUM);
                 if (count($row) > 1) {
@@ -202,7 +202,7 @@ class DB extends mysqli {
      */
     public function fetchSingle($query) {
         $r = $this->select($query);
-        $a = [];
+        $a = array();
 
         for ($i = 0; $i < $r->num_rows; $i++) {
             $row = $r->fetch_array(MYSQLI_NUM);
@@ -229,7 +229,7 @@ class DB extends mysqli {
      */
     public function objInsert(DBStorable $obj, $mode = self::MODE_INSERT, $delayed = false) {
         $vars = $obj->getVars();
-        $set = [];
+        $set = array();
         
         foreach ($vars as $var) {
             $set['`' . $var . '`'] = $obj->serializeVar($var, $this);
@@ -250,8 +250,8 @@ class DB extends mysqli {
         
         $vars = $obj->getVars();
         $keys = $obj->getKeyVars();
-        $values = [];
-        $updValues = [];
+        $values = array();
+        $updValues = array();
         
         foreach ($vars as $var) {
             $values["`" . $var . "`"] = $obj->serializeVar($var, $this);
@@ -271,7 +271,7 @@ class DB extends mysqli {
      * @return  boolean см. DB::update
      */
     public function objUpdate(DBStorable $obj, array $fields) {
-        $set = [];
+        $set = array();
         foreach ($fields as $var) {
             $set['`' . $var . '`'] = $obj->serializeVar($var, $this);
         }
@@ -302,8 +302,7 @@ class DB extends mysqli {
      * @return  boolean     всегда <b>TRUE</b>
      */
     public function objIncrement(DBStorable $object, array $fields) {
-        
-        $vars = [];
+        $vars = array();
         foreach ($fields as $field => $delta) {
             if (property_exists($object, $field) && is_numeric($object->$field) && $delta != 0) {
                 $object->$field += $delta;
@@ -326,7 +325,7 @@ class DB extends mysqli {
     private function getKeyWhere(DBStorable $obj) {
         $keys = $obj->getKeyVars();
         
-        $and = [];
+        $and = array();
         foreach ($keys as $k) {
             $and[$k] = "`" . $k . "`=" . $obj->serializeVar($k, $this);
         }
@@ -404,7 +403,7 @@ class DB extends mysqli {
      */
     public function update($table, array $set, $where = '', $limit = 0) {
         if (count($set) > 0) {
-            $setA = [];
+            $setA = array();
             foreach ($set as $k => $v) {
                 $setA[] = $k . " = " . $v;
             }

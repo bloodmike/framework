@@ -38,7 +38,7 @@ class Container {
     public function __construct($environment) {
         $this->config = require_once('./../config/' . $environment . '.php');
         $this->services = require_once('./services.php');
-        $this->instances = [];
+        $this->instances = array();
         
         if (!is_array($this->config)) {
             throw new InvalidArgumentException('Не удалось загрузить конфигурацию');
