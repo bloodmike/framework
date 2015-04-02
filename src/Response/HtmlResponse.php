@@ -112,7 +112,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
 	/**
 	 * @var StylesheetInterface[]
 	 */
-	private $stylesheets = [];
+	private $stylesheets = array();
 	
     /**
      * @var string путь, по которому располагаются файлы стилей проекта
@@ -123,6 +123,11 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
      * @var string путь, по которому располагаются js-файлы проекта
      */
     private $javascriptsPath = '/i/js/';
+    
+	/**
+	 * @var string 
+	 */
+	private $rootPrefix  = '';
     
     /**
      * @param int $code
@@ -147,6 +152,23 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     public function getStylesheetsPath() {
         return $this->stylesheetsPath;
     }
+    
+	/**
+	 * @param string $rootPrefix
+	 * 
+	 * @return $this
+	 */
+	public function setRootPrefix($rootPrefix) {
+		$this->rootPrefix = $rootPrefix;
+		return $this;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getRootPrefix() {
+		return $this->rootPrefix;
+	}
     
     /**
      * @param string $path
@@ -276,7 +298,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
      * @return static
      */
     public function addJS($js, $plain = false, $charset = null) {
-        $this->javascripts[] = [$js, $plain, $charset];
+        $this->javascripts[] = array($js, $plain, $charset);
         return $this;
     }
     
@@ -287,7 +309,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
      * @return static
      */
     public final function addLink($rel, $href) {
-        $this->links[] = [$rel, $href];
+        $this->links[] = array($rel, $href);
         return $this;
     }
     
@@ -448,18 +470,18 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     }
     
     /**
-     * 
+     * Отрисовка всех вложенных в ответ стилей
      */
-    private final function drawStylesheets() {
+    protected function  drawStylesheets() {
 		foreach ($this->stylesheets as $stylesheet) {
 			$stylesheet->draw($this);
 		}
     }
     
     /**
-     * 
+     * Отрисовка всех вложенных в ответ жаваскриптов
      */
-    private final function drawJS() {
+    protected function drawJS() {
 		
 		$versionSuffix = '';
 		

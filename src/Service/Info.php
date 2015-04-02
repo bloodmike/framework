@@ -47,7 +47,7 @@ class Info {
         if (!array_key_exists(self::FIELD_ARGS, $info)) {
             throw new InvalidArgumentException('Property [' . self::FIELD_ARGS . '] not defined');
         }
-        $this->arguments = [];
+        $this->arguments = array();
         if (!is_array($info[self::FIELD_ARGS])) {
             $this->arguments = [$info[self::FIELD_ARGS]];
         }

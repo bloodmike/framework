@@ -4,6 +4,7 @@ namespace Framework\DB;
 
 use Framework\Data\DBObjectId;
 use Framework\Data\DBStorable;
+use InvalidArgumentException;
 
 /**
  * Класс DBLoader
@@ -102,6 +103,28 @@ class DBLoader {
         }
         
         return null;
+    }
+    
+    /**
+     * @param string $classname класс, объекты которого будут собраны
+     * @param string $query sql-запрос
+     * @param string $keyColumn столбец уникальных значений, по которым в массиве будут разложены объекты
+     * 
+     * @throws InvalidArgumentException если передан несуществующий класс
+     * 
+     * @return object[] массив объектов указанного класса, собранных из данных запроса
+     */
+    public function loadListFromQuery($classname, $query, $keyColumn) {
+        if (!class_exists($classname)) {
+            throw new InvalidArgumentException();
+        }
+        
+        $array = $this->db->fetchAll($query, $keyColumn);
+        foreach ($array as $key => $row) {
+            $array[$key] = new $classname($row);
+        }
+        
+        return $array;
     }
     
 	/**
