@@ -57,9 +57,9 @@ class Router {
             if (!is_array($routeData)) {
                 continue;
             }
-            if ($this->projectRootPrefix != ''){
+            /*if ($this->projectRootPrefix != ''){
                 $routeData['uri'] = $this->projectRootPrefix . (array_key_exists('uri', $routeData) ? '' : $routeData['uri']);
-            }
+            }*/
             
             $this->routes[$routeName] = Route::createFromArray($routeName, $routeData, $this->domains);
         }
