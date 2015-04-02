@@ -34,9 +34,10 @@ class Container {
     
     /**
      * @param string $environment имя окружения
+	 * @param string $path путь к файлам конфигурации
      */
-    public function __construct($environment) {
-        $this->config = require_once('./../config/' . $environment . '.php');
+    public function __construct($environment, $path = './../config/') {
+        $this->config = require_once($path . $environment . '.php');
         $this->services = require_once('./services.php');
         $this->instances = [];
         
