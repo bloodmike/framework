@@ -13,9 +13,9 @@ use RuntimeException;
  */
 class Container {
     /**
-     * @var array массив с конфигурацией инстанса
+     * @var Config массив с конфигурацией инстанса
      */
-    private $config;
+    private $Config;
     
     /**
      * @var array массив с конфигурацией сервисов, доступных через контейнер
@@ -37,13 +37,9 @@ class Container {
 	 * @param string $path путь к файлам конфигурации
      */
     public function __construct($environment, $path = './../config/') {
-        $this->config = require_once($path . $environment . '.php');
+        $this->Config = new Config(require_once($path . $environment . '.php'));
         $this->services = require_once('./services.php');
         $this->instances = array();
-        
-        if (!is_array($this->config)) {
-            throw new InvalidArgumentException('Не удалось загрузить конфигурацию');
-        }
         
         if (!is_array($this->services)) {
             throw new InvalidArgumentException('Не удалось загрузить описание сервисов');
@@ -67,6 +63,10 @@ class Container {
         if ($name == 'service_container') {
             return $this;
         }
+        else
+        if ($name == 'service_config') {
+            return $this->Config;
+        }
         
         if (!array_key_exists($name, $this->instances)) {
             
@@ -75,8 +75,6 @@ class Container {
             }
             
             $serviceInfo = new Info($this->services[$name]);
-            
-            $reflection = new ReflectionClass($serviceInfo->getClassName());
             
             $args = [];
             foreach ($serviceInfo->getArguments() as $argName) {
@@ -88,7 +86,16 @@ class Container {
                 }
             }
             
-            $this->instances[$name] = $reflection->newInstanceArgs($args);
+            $className = $serviceInfo->getClassName();
+            $method = $serviceInfo->getMethod();
+            
+            if ($method == '') {
+                $reflection = new ReflectionClass($className);
+                $this->instances[$name] = $reflection->newInstanceArgs($args);
+            }
+            else {
+                $this->instances[$name] = call_user_func_array([$className, $method], $args);
+            }
         }
         
         return $this->instances[$name];
@@ -100,16 +107,7 @@ class Container {
      * @return bool
      */
     public function hasParameter($parameterName) {
-        $parameterNameParts = explode('.', $parameterName);
-        $pointer =& $this->config;
-        foreach ($parameterNameParts as $namePart) {
-            if (!array_key_exists($namePart, $pointer)) {
-                return false;
-            }
-            
-            $pointer =& $pointer[$namePart];
-        }
-        return true;
+        return $this->Config->has($parameterName);
     }
     
     /**
@@ -121,16 +119,7 @@ class Container {
      * @throws InvalidArgumentException если указанного параметра нет в конфигурации
      */
     public function getParameter($parameterName) {
-        $parameterNameParts = explode('.', $parameterName);
-        $pointer =& $this->config;
-        foreach ($parameterNameParts as $namePart) {
-            if (!array_key_exists($namePart, $pointer)) {
-                throw new InvalidArgumentException('Параметр [' . $parameterName . '] не найден');
-            }
-            
-            $pointer =& $pointer[$namePart];
-        }
-        return $pointer;
+        return $this->Config->get($parameterName);
     }
     
     /**
@@ -153,9 +142,6 @@ class Container {
      * @throws InvalidArgumentException если указанное поле уже занято другим сервисом
      */
     public function set($name, $value) {
-        if (array_key_exists($name, $this->instances)) {
-            throw new InvalidArgumentException('Поле [' . $name . '] занято');
-        }
         $this->instances[$name] = $value;
         return $this;
     }
