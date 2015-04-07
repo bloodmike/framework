@@ -5,25 +5,35 @@ namespace Framework\Service;
 use InvalidArgumentException;
 
 /**
- * Description of Info
+ * Информация о сервисе в контейнере
  *
  * @author mkoshkin
  */
 class Info {
     /**
-     * 
+     * Имя вызываемого при создании объекта класса
      */
     const FIELD_CLASS = 'class';
     
     /**
-     * 
+     * Имена параметров, передаваемых объекту при создании
      */
     const FIELD_ARGS = 'args';
     
     /**
-     * @var string
+     * Если создание объекта производится через вызов одного из методов класса - имя этого метода
+     */
+    const FIELD_METHOD = 'method';
+    
+    /**
+     * @var string 
      */
     private $className;
+    
+    /**
+     * @var string
+     */
+    private $method;
     
     /**
      * @var string[]
@@ -54,6 +64,11 @@ class Info {
         else {
             $this->arguments = $info[self::FIELD_ARGS];
         }
+        
+        $this->method = '';
+        if (array_key_exists(self::FIELD_METHOD, $info)) {
+            $this->method = $info[self::FIELD_METHOD];
+        }
     }
     
     /**
@@ -61,6 +76,13 @@ class Info {
      */
     public function getClassName() {
         return $this->className;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getMethod() {
+        return $this->method;
     }
     
     /**
