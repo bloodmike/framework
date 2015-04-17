@@ -81,6 +81,10 @@ class Container {
                 if (mb_substr($argName, 0, 1) == '@') {
                     $args[] = $this->get(ltrim($argName, '@'));
                 }
+				elseif (mb_substr($argName, 0, 1) == '\\') {
+					// имя класса начинается со слэша
+					$args[] = $argName;
+				}
                 else {
                     $args[] = $this->getParameter($argName);
                 }

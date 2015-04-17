@@ -26,6 +26,7 @@ class DBLoader {
     }
 	
     /**
+	 * @deprecated since version 0.2
      * 
      * @param DBObjectId $obj
      * @param int $id
@@ -44,6 +45,8 @@ class DBLoader {
     }
     
     /**
+	 * @deprecated since version 0.2
+	 * 
      * @param DBObjectId $object
      * @param int $id
      * 
@@ -61,6 +64,7 @@ class DBLoader {
     }
     
     /**
+	 * @deprecated since version 0.2
      * 
      * @param DBStorable $obj
      * @param array $keys
@@ -84,6 +88,7 @@ class DBLoader {
     }
     
     /**
+	 * @deprecated since version 0.2
      * 
      * @param DBStorable $obj
      * @param array $keys
@@ -114,7 +119,7 @@ class DBLoader {
      * 
      * @return object[] массив объектов указанного класса, собранных из данных запроса
      */
-    public function loadListFromQuery($classname, $query, $keyColumn) {
+    public function loadListFromQuery($classname, $query, $keyColumn = '') {
         if (!class_exists($classname)) {
             throw new InvalidArgumentException();
         }
