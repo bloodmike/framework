@@ -74,10 +74,10 @@ class Container {
                 throw new RuntimeException('Service [' . $name . '] not found');
             }
             
-            $serviceInfo = new Info($this->services[$name]);
+            $ServiceInfo = new Info($this->services[$name]);
             
             $args = [];
-            foreach ($serviceInfo->getArguments() as $argName) {
+            foreach ($ServiceInfo->getArguments() as $argName) {
                 if (mb_substr($argName, 0, 1) == '@') {
                     $args[] = $this->get(ltrim($argName, '@'));
                 }
@@ -90,15 +90,21 @@ class Container {
                 }
             }
             
-            $className = $serviceInfo->getClassName();
-            $method = $serviceInfo->getMethod();
+            $className = $ServiceInfo->getClassName();
+			$generatorClassName = $ServiceInfo->getGeneratorClassName();
+            $method = $ServiceInfo->getMethod();
             
             if ($method == '') {
                 $reflection = new ReflectionClass($className);
                 $this->instances[$name] = $reflection->newInstanceArgs($args);
             }
             else {
-                $this->instances[$name] = call_user_func_array([$className, $method], $args);
+                $this->instances[$name] = call_user_func_array(
+					[
+						($generatorClassName != '' ? $generatorClassName : $className), 
+						$method
+					], 
+					$args);
             }
         }
         

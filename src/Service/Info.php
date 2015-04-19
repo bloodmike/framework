@@ -20,6 +20,11 @@ class Info {
      */
     const FIELD_ARGS = 'args';
     
+	/**
+	 * Поле с классом-генератором сервиса
+	 */
+	const FIELD_GENERATOR_CLASS = 'generator_class';
+	
     /**
      * Если создание объекта производится через вызов одного из методов класса - имя этого метода
      */
@@ -30,6 +35,11 @@ class Info {
      */
     private $className;
     
+	/**
+	 * @var string
+	 */
+	private $generatorClassName;
+	
     /**
      * @var string
      */
@@ -65,6 +75,11 @@ class Info {
             $this->arguments = $info[self::FIELD_ARGS];
         }
         
+		$this->generatorClassName = '';
+		if (array_key_exists(self::FIELD_GENERATOR_CLASS, $info)) {
+			$this->generatorClassName = $info[self::FIELD_GENERATOR_CLASS];
+		}
+		
         $this->method = '';
         if (array_key_exists(self::FIELD_METHOD, $info)) {
             $this->method = $info[self::FIELD_METHOD];
@@ -78,6 +93,13 @@ class Info {
         return $this->className;
     }
     
+	/**
+	 * @return string
+	 */
+	public function getGeneratorClassName() {
+		return $this->generatorClassName;
+	}
+	
     /**
      * @return string
      */
