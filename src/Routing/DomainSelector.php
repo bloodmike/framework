@@ -42,13 +42,15 @@ class DomainSelector {
      * @return Domain объект с данными домена
      */
     public function createDomain($fullDomainString) {
-        $to = [];
-        preg_match('/(?:([a-z\d\-_]+)\.)?([a-z\d\-]+\.[a-z]{2,5})$/', $fullDomainString, $to);
+        $FullDomainString = new DomainString($fullDomainString);
         
         $domains = $this->Config->get('domains');
-        foreach ($domains as $domainName => $domain) {
-            if ($domain == $to[2]) {
-                return new Domain($domainName, $domain, $to[1]);
+        foreach ($domains as $domainName => $domainString) {
+            $DomainString = new DomainString($domainString);
+            $subDomain = $DomainString->getSubDomain($FullDomainString);
+            
+            if (is_string($subDomain)) {
+                return new Domain($domainName, $domainString, $subDomain);
             }
         }
         // если домен не найден - возвращаем домен по умолчанию

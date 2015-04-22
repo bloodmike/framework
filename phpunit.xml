@@ -1,0 +1,24 @@
+<phpunit
+        bootstrap               = "./bootstrap.php"
+        colors                  = "true"
+        verbose                 = "true"
+        debug                   = "true"
+        report-useless-tests    = "true"
+        >
+    <testsuites>
+        <testsuite name="all">
+            <directory>tests/</directory>
+        </testsuite>
+    </testsuites>
+    <!--logging>
+        <log type="coverage-html" target="/var/log/companero/code-coverage" charset="UTF-8"/>
+    </logging>
+    <filter>
+        <whitelist>
+            <directory>src/Companero/CompaneroBundle/</directory>
+            <exclude>
+                <directory>src/Companero/CompaneroBundle/Tests</directory>
+            </exclude>
+        </whitelist>
+    </filter-->
+</phpunit>
