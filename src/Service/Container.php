@@ -52,6 +52,15 @@ class Container {
     }
     
     /**
+     * Удаляет из контейнера все вложенные объекты
+     */
+    public function clear() {
+        foreach (array_keys($this->instances) as $name) {
+            unset($this->instances[$name]);
+        }
+    }
+    
+    /**
      * @param string $name имя сервиса
      * 
      * @return mixed объект указанного сервиса
@@ -62,9 +71,7 @@ class Container {
         
         if ($name == 'service_container') {
             return $this;
-        }
-        else
-        if ($name == 'service_config') {
+        } elseif ($name == 'service_config') {
             return $this->Config;
         }
         
@@ -80,12 +87,10 @@ class Container {
             foreach ($ServiceInfo->getArguments() as $argName) {
                 if (mb_substr($argName, 0, 1) == '@') {
                     $args[] = $this->get(ltrim($argName, '@'));
-                }
-				elseif (mb_substr($argName, 0, 1) == '\\') {
+                } elseif (mb_substr($argName, 0, 1) == '\\') {
 					// имя класса начинается со слэша
 					$args[] = $argName;
-				}
-                else {
+				} else {
                     $args[] = $this->getParameter($argName);
                 }
             }
@@ -97,8 +102,7 @@ class Container {
             if ($method == '') {
                 $reflection = new ReflectionClass($className);
                 $this->instances[$name] = $reflection->newInstanceArgs($args);
-            }
-            else {
+            } else {
                 $this->instances[$name] = call_user_func_array(
 					[
 						($generatorClassName != '' ? $generatorClassName : $className), 
@@ -148,8 +152,6 @@ class Container {
      * @param mixed $value помещаемый объект
      * 
      * @return $this
-     * 
-     * @throws InvalidArgumentException если указанное поле уже занято другим сервисом
      */
     public function set($name, $value) {
         $this->instances[$name] = $value;
