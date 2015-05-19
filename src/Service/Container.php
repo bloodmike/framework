@@ -109,7 +109,7 @@ class Container {
 
 		return new Info($this->services[$name]);
 	}
-	
+    
     /**
      * @param string $name имя сервиса
      * 

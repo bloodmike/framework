@@ -2,6 +2,8 @@
 
 namespace Framework\Service;
 
+use InvalidArgumentException;
+
 /**
  * Объект для извлечения данных конфигурации
  *
