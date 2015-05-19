@@ -27,6 +27,11 @@ class Container {
      */
     private $instances;
     
+	/**
+	 * @var array хэшмэп с именами сервисов, которые установлены в контейнер через Container::set
+	 */
+	private $customServiceNamesMap;
+	
     /**
      * @var Container
      */
@@ -40,6 +45,7 @@ class Container {
         $this->Config = new Config(require_once($path . $environment . '.php'));
         $this->services = require_once('./services.php');
         $this->instances = array();
+		$this->customServices = array();
         
         if (!is_array($this->services)) {
             throw new InvalidArgumentException('Не удалось загрузить описание сервисов');
@@ -51,6 +57,59 @@ class Container {
         }
     }
     
+	/**
+	 * Очищает контейнер от проставленных вручную объектов-сервисов
+	 */
+	public function clear() {
+		foreach ($this->getCustomServiceNames() as $name) {
+			if (array_key_exists($name, $this->instances)) {
+				unset($this->instances[$name]);
+			}
+		}
+		
+		$this->customServiceNamesMap = array();
+	}
+	
+	/**
+	 * @return string[] список имён проставленных вручную сервисов
+	 */
+	private function getCustomServiceNames() {
+		return array_keys($this->customServiceNamesMap);
+	}
+	
+	/**
+	 * Сохранить имя сервиса, установленного в контейнер вручную
+	 * 
+	 * @param string $name имя сервиса
+	 */
+	private function saveCustomService($name) {
+		$this->customServiceNamesMap[$name] = true;
+	}
+	
+	/**
+	 * @param string $name имя сервиса
+	 * 
+	 * @return bool существует ли в конфигурации сервис с указанным именем
+	 */
+	private function serviceExists($name) {
+		return array_key_exists($name, $this->services);
+	}
+	
+	/**
+	 * @param string $name имя сервиса
+	 * 
+	 * @return Info объект с описанием сервиса
+	 * 
+	 * @throws RuntimeException если сервиса нет в конфигурации
+	 */
+	private function createServiceInfo($name) {
+		if (!$this->serviceExists($name)) {
+			throw new RuntimeException('Service [' . $name . '] not found');
+		}
+
+		return new Info($this->services[$name]);
+	}
+	
     /**
      * @param string $name имя сервиса
      * 
@@ -59,33 +118,23 @@ class Container {
      * @throws RuntimeException если сервис не найден
      */
     public function get($name) {
-        
         if ($name == 'service_container') {
             return $this;
-        }
-        else
-        if ($name == 'service_config') {
+        } elseif ($name == 'service_config') {
             return $this->Config;
         }
         
         if (!array_key_exists($name, $this->instances)) {
-            
-            if (!array_key_exists($name, $this->services)) {
-                throw new RuntimeException('Service [' . $name . '] not found');
-            }
-            
-            $ServiceInfo = new Info($this->services[$name]);
+            $ServiceInfo = $this->createServiceInfo($name);
             
             $args = [];
             foreach ($ServiceInfo->getArguments() as $argName) {
                 if (mb_substr($argName, 0, 1) == '@') {
                     $args[] = $this->get(ltrim($argName, '@'));
-                }
-				elseif (mb_substr($argName, 0, 1) == '\\') {
+                } elseif (mb_substr($argName, 0, 1) == '\\') {
 					// имя класса начинается со слэша
 					$args[] = $argName;
-				}
-                else {
+				} else {
                     $args[] = $this->getParameter($argName);
                 }
             }
@@ -97,8 +146,7 @@ class Container {
             if ($method == '') {
                 $reflection = new ReflectionClass($className);
                 $this->instances[$name] = $reflection->newInstanceArgs($args);
-            }
-            else {
+            } else {
                 $this->instances[$name] = call_user_func_array(
 					[
 						($generatorClassName != '' ? $generatorClassName : $className), 
@@ -112,9 +160,9 @@ class Container {
     }
     
     /**
-     * @param string $parameterName
+     * @param string $parameterName имя параметра
      * 
-     * @return bool
+     * @return bool существует ли указанный параметр конфигурации
      */
     public function hasParameter($parameterName) {
         return $this->Config->has($parameterName);
@@ -142,16 +190,19 @@ class Container {
     }
     
     /**
-     * Поместить в указанное поле переданный объект
+     * Поместить в указанное поле переданный объект.
+	 * Если в поле должен храниться какой-либо сервис - команда Container::clear очистит его от установленного значения.
      * 
      * @param string $name поле контейнера
      * @param mixed $value помещаемый объект
      * 
      * @return $this
-     * 
-     * @throws InvalidArgumentException если указанное поле уже занято другим сервисом
      */
     public function set($name, $value) {
+		if ($this->serviceExists($name)) {
+			$this->saveCustomService($name);
+		}
+		
         $this->instances[$name] = $value;
         return $this;
     }
