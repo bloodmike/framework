@@ -129,11 +129,16 @@ class Container {
             
             $args = [];
             foreach ($ServiceInfo->getArguments() as $argName) {
-                if (mb_substr($argName, 0, 1) == '@') {
+				$firstChar = mb_substr($argName, 0, 1);
+				
+                if ($firstChar == '@') {
+					// имя другого сервиса начинается с собачки
                     $args[] = $this->get(ltrim($argName, '@'));
-                } elseif (mb_substr($argName, 0, 1) == '\\') {
+                } elseif ($firstChar == '\\') {
 					// имя класса начинается со слэша
 					$args[] = $argName;
+				} elseif ($firstChar == '#') {
+					$args[] = mb_substr($argName, 1);
 				} else {
                     $args[] = $this->getParameter($argName);
                 }
