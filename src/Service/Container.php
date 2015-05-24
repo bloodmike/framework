@@ -57,25 +57,12 @@ class Container {
         }
     }
     
-	/**
-	 * Очищает контейнер от проставленных вручную объектов-сервисов
-	 */
-	public function clear() {
-		foreach ($this->getCustomServiceNames() as $name) {
-			if (array_key_exists($name, $this->instances)) {
-				unset($this->instances[$name]);
-			}
-		}
-		
-		$this->customServiceNamesMap = array();
-	}
-	
-	/**
-	 * @return string[] список имён проставленных вручную сервисов
-	 */
-	private function getCustomServiceNames() {
-		return array_keys($this->customServiceNamesMap);
-	}
+    /**
+     * Очищает контейнер от всех объектов
+     */
+    public function clear() {
+        $this->instances = array();
+    }
 	
 	/**
 	 * Сохранить имя сервиса, установленного в контейнер вручную
