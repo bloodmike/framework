@@ -279,6 +279,17 @@ class DB extends mysqli {
         return $this->update($obj->getTable(), $set, $this->getKeyWhere($obj), 1);
     }
     
+	/**
+	 * Обновляет все поля объекта
+	 * 
+	 * @param DBStorable $obj объект
+	 * 
+	 * @return boolean см. DB::update
+	 */
+	public function objUpdateAll(DBStorable $obj) {
+		return $this->objUpdate($obj, $obj->getVars());
+	}
+	
     /**
      * Произвести запрос на вставку объекта в таблицу.
      * @param   string      $table имя таблицы
