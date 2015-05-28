@@ -2,6 +2,7 @@
 
 namespace Framework\Command;
 
+use Framework\Context;
 use Framework\Service\Container;
 use InvalidArgumentException;
 use RuntimeException;
@@ -35,8 +36,13 @@ abstract class Command {
     /**
      * @var bool[] хэшмэп с именами / краткими именами параметров
      */
-    private $namesMap = [];
-        
+    private $namesMap;
+    
+    /**
+     * @var Context контекст с параметрами команды
+     */
+    protected $context;
+    
     /**
      * @param Container $Container контейнер зависимостей
      * @param array $args аргументы
@@ -44,7 +50,9 @@ abstract class Command {
     public final function __construct(Container $Container, array $args) {
         $this->Container = $Container;
         $this->args = $args;
+        $this->context = new Context($this->args);
         $this->description = '';
+        $this->namesMap = [];
         $this->configure();
     }
     
@@ -57,6 +65,7 @@ abstract class Command {
      */
     public function setArgs(array $args) {
         $this->args = $args;
+        $this->context = new Context($this->args);
         return $this;
     }
     
@@ -115,7 +124,6 @@ abstract class Command {
      */
     abstract public function run();
     
-    
     /**
      * Вывод строки в консоль
      * 
@@ -125,6 +133,18 @@ abstract class Command {
      */
     protected final function output($string) {
         echo $string;
+        return $this;
+    }
+    
+    /**
+     * Вывод строки в консоль с добавлением PHP_EOL в конец строки
+     * 
+     * @param string $string строка для вывода
+     * 
+     * @return $this
+     */
+    protected final function outputLn($string) {
+        echo $string . PHP_EOL;
         return $this;
     }
     
