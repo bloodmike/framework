@@ -4,6 +4,7 @@ namespace Framework\Command;
 
 use Framework\Service\Container;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Консольная команда
@@ -125,5 +126,21 @@ abstract class Command {
     protected final function output($string) {
         echo $string;
         return $this;
+    }
+    
+    /**
+     * @param string $className класс команды
+     * @param Container $Container контейнер зависимостей
+     * 
+     * @return Command объект указанного класса
+     * 
+     * @throws RuntimeException если переданный класс не является подклассом консольной команды
+     */
+    public static function createInstance($className, Container $Container) {
+        if (!is_subclass_of($className, self::class)) {
+            throw new \RuntimeException('Класс [' . $className . '] не является командой');
+        }
+        
+        return new $className($Container, []);
     }
 }

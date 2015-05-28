@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\Command\Manager;
+namespace Framework\Command\Console;
 
 use Framework\Command\Argument;
 use Framework\Command\ArgumentsData;
@@ -68,16 +68,6 @@ class ConsoleCommandManager {
             $ArgumentsData->remove($name);
         }
         
-        return $ArgumentsData->getAll();
-    }
-    
-    /**
-     * @global array $argv агрументы командной строки
-     * 
-     * @return ConsoleCommandManager новый объект менеджера консольных команд
-     */
-    public static function createInstance() {
-        global $argv;
-        return new ConsoleCommandManager($argv);
+        return $ArgumentsData;
     }
 }
