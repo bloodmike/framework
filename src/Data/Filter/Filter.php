@@ -38,6 +38,13 @@ abstract class Filter {
     }
     
     /**
+     * @return DB коннектор к базе, используемый фильтром
+     */
+    public function getDB() {
+        return $this->db;
+    }
+    
+    /**
      * Получить массив JOIN'ов запроса
      * @param   string          $tableShort краткое название главной таблицы
      * @return  array,\string
