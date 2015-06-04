@@ -53,9 +53,19 @@ class DomainSelector {
                 return new Domain($domainName, $domainString, $subDomain);
             }
         }
+        // TODO: бросать исключение если домен не найден
         // если домен не найден - возвращаем домен по умолчанию
         $defaultDomain = $this->Config->get('default_domain');
-        return new Domain('', $domains[$defaultDomain], $to[1]);
+        return new Domain('', $domains[$defaultDomain], '');
+    }
+    
+    /**
+     * @return Domain домен по умолчанию
+     */
+    public function createDefaultDomain() {
+        $defaultDomainName = $this->Config->get('default_domain');
+        $domains = $this->Config->get('domains');
+        return new Domain($defaultDomainName, $domains[$defaultDomainName], '');
     }
     
     /**
