@@ -113,6 +113,16 @@ class Context {
     }
     
     /**
+     * @param string $field
+     * @param string $characterMask
+     * 
+     * @return string
+     */
+    public function getTrimmedString($field, $characterMask = " \t\n\r\0\x0B") {
+        return trim($this->getString($field, $characterMask));
+    }
+    
+    /**
      * Проверить, что среди параметров присутствует указанное поле.
      * @param string $field имя поля
      * @return boolean <b>TRUE</b> если поле есть среди параметров, <b>FALSE</b> в противном случае

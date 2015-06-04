@@ -26,8 +26,22 @@ abstract class Filter {
      */
     protected $db;
     
-    public function __construct() {
-        $this->db = ClassHelper::getDB(Container::$inst);
+    /**
+     * @param DB|null $db
+     */
+    public function __construct(DB $db = null) {
+        if ($db === null) {
+            $this->db = ClassHelper::getDB(Container::$inst);
+        } else {
+            $this->db = $db;
+        }
+    }
+    
+    /**
+     * @return DB коннектор к базе, используемый фильтром
+     */
+    public function getDB() {
+        return $this->db;
     }
     
     /**
@@ -76,5 +90,4 @@ abstract class Filter {
     public final function getTableSmall($tableSmall) {
         return $this->tablePrefix . $tableSmall;
     }
-    
 }
