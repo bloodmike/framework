@@ -49,6 +49,7 @@ abstract class Command {
      */
     public final function __construct(Container $Container, array $args) {
         $this->Container = $Container;
+        $this->Arguments = [];
         $this->args = $args;
         $this->context = new Context($this->args);
         $this->description = '';
