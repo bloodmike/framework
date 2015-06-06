@@ -3,8 +3,6 @@
 namespace Framework\Data\Filter;
 
 use Framework\DB\DB;
-use Framework\Service\Container;
-use WM\ClassHelper;
 
 /**
  * Обёртка для фильтра объектов.
@@ -61,7 +59,7 @@ class FilterWrapper {
         $this->tableShort = (string)$tableShort;
         $this->tableFull = (string)$tableFull;
         
-        $this->db = ClassHelper::getDB(Container::$inst);
+        $this->db = $filter->getDB();
     }
     
     /**

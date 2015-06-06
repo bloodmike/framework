@@ -3,8 +3,6 @@
 namespace Framework\Data\Filter;
 
 use Framework\DB\DB;
-use Framework\Service\Container;
-use WM\ClassHelper;
 
 /**
  * Фильтр объектов.
@@ -27,14 +25,10 @@ abstract class Filter {
     protected $db;
     
     /**
-     * @param DB|null $db
+     * @param DB $db
      */
-    public function __construct(DB $db = null) {
-        if ($db === null) {
-            $this->db = ClassHelper::getDB(Container::$inst);
-        } else {
-            $this->db = $db;
-        }
+    public function __construct(DB $db) {
+		$this->db = $db;
     }
     
     /**
