@@ -33,13 +33,99 @@ abstract class ArrayHelper {
 		return $pointer;
 	}
 	
+    /**
+     * @param array $from массив данных
+	 * @param string[]|string $field поле/список вложенных полей
+     * 
+     * @return bool есть ли указанное поле в массиве
+     */
+    public static function has(array $from, $field) {
+        if (!is_array($field)) {
+			$field = [$field];
+		}
+		
+		$pointer =& $from;
+		
+		foreach ($field as $fieldName) {
+			if (!is_array($pointer) || !array_key_exists($fieldName, $pointer)) {
+				return false;
+			}
+			
+			$pointer =& $pointer[$fieldName];
+		}
+		
+        return true;
+    }
+	
+    /**
+     * Установить значение в указанное поле переданного массива.
+     * Для вложенных полей массивы создаются автоматически, затирая существующие вложенные поля - не-массивы.
+     * 
+     * @param array& $to массив данных
+	 * @param string[]|string $field поле/список вложенных полей
+     * @param mixed $value
+     */
+    public static function set(array& $to, $field, $value) {
+        if (!is_array($field)) {
+			$field = [$field];
+		}
+		
+		$pointer =& $to;
+		$index = 0;
+        
+		foreach ($field as $fieldName) {
+			if (!is_array($pointer) || !array_key_exists($fieldName, $pointer)) {
+				$pointer[$fieldName] = [];
+			}
+			
+            if ($index == count($field) - 1) {
+                $pointer[$fieldName] = $value;
+            } else {
+                $pointer =& $pointer[$fieldName];
+            }
+		}
+    }
+    
+    /**
+     * Удаляет из переданного массива указанное поле
+     * 
+     * @param array& $from массив данных
+     * @param string[]|string $field поле/список вложенных полей
+     * 
+     * @return bool удалено ли поле; если поля не было в массиве - возвращается false
+     */
+    public static function remove(array& $from, $field) {
+        if (!is_array($field)) {
+			$field = [$field];
+		}
+        
+		$pointer =& $from;
+		$index = 0;
+        
+		foreach ($field as $fieldName) {
+            if (!is_array($pointer) || !array_key_exists($fieldName, $pointer)) {
+				return false;
+			}
+            
+			if ($index == count($field) - 1) {
+                unset($pointer[$fieldName]);
+            } else {
+                $pointer =& $pointer[$fieldName];
+            }
+            
+            $index++;
+		}
+        
+        return true;
+    }
+    
 	/**
 	 * @param array $from массив
 	 * @param string|string[] $field поле/список вложенных полей
 	 * 
 	 * @return array копия переданного массива без указанного элемента
 	 */
-	public function withoutField(array $from, $field) {
+	public static function withoutField(array $from, $field) {
 		if (!is_array($field)) {
 			$field = [$field];
 		}
