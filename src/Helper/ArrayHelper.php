@@ -32,4 +32,36 @@ abstract class ArrayHelper {
 		
 		return $pointer;
 	}
+	
+	/**
+	 * @param array $from массив
+	 * @param string|string[] $field поле/список вложенных полей
+	 * 
+	 * @return array копия переданного массива без указанного элемента
+	 */
+	public function withoutField(array $from, $field) {
+		if (!is_array($field)) {
+			$field = [$field];
+		}
+		
+		$copy = $from;
+		$pointer =& $copy;
+		$index = 0;
+		
+		foreach ($field as $fieldName) {
+			if (!array_key_exists($fieldName, $pointer)) {
+				// если элемент массива не найден - останавливаем
+				break;
+			} elseif ($index == count($field) - 1) {
+				// если это последний элемент вложенного поля - удаляем
+				unset($pointer[$fieldName]);
+				break;
+			}
+			
+			$pointer =& $pointer[$fieldName];
+			$index++;
+		}
+		
+		return $copy;
+	}
 }
