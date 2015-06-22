@@ -301,7 +301,26 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
         $this->javascripts[] = array($js, $plain, $charset);
         return $this;
     }
-    
+
+    /**
+     * Добавить переменные в js-код
+     *
+     * @param array $variables массив переменных: [name] => [value]
+     *
+     * @return $this
+     */
+    public function addJSVariables(array $variables) {
+        if (count($variables) > 0) {
+            $parts = [];
+            foreach ($variables as $name => $value) {
+                $parts[] = 'var ' . $name . '=' . json_encode($value, JSON_UNESCAPED_UNICODE) . ';';
+            }
+            $this->addJS(implode(PHP_EOL, $parts), true);
+        }
+
+        return $this;
+    }
+
     /**
      * @param string $rel
      * @param string $href
