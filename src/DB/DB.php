@@ -2,11 +2,11 @@
 
 namespace Framework\DB;
 
-use Exception;
 use Framework\Data\DBStorable;
 use Framework\Log\DataSourceLogger;
 use mysqli;
 use mysqli_result;
+use RuntimeException;
 /**
  * Обёртка вокруг mysqli для извечения данных из базы в удобной форме.
  * 
@@ -45,9 +45,11 @@ class DB extends mysqli {
     public $lastQuery = '';
     
     /**
+	 * @deprecated
+	 * 
      * @var boolean Выбрасывать исключение в случае ошибки выполнения запроса
      */
-    public $throwOnError = false;
+    public $throwOnError = true;
     
     /**
      * @param array $config
@@ -55,7 +57,6 @@ class DB extends mysqli {
     public function __construct(array $config, DataSourceLogger $dataSourceLogger) {
         parent::mysqli($config['host'], $config['user'], $config['password'], $config['name']);
         $this->set_charset('utf8');
-        
         $this->dataSourceLogger = $dataSourceLogger;
     }
     
@@ -388,8 +389,8 @@ class DB extends mysqli {
 			);*/
 		}
         
-        if ($r === false && $this->throwOnError) {
-            throw new Exception($this->error);
+        if ($r === false) {
+            throw new RuntimeException($this->error);
 		}
         
         return $r;
