@@ -143,7 +143,7 @@ abstract class ArrayHelper {
 				// если это последний элемент вложенного поля - удаляем
 				if ($value === null) {
 					unset($pointer[$fieldName]); // если не передано конкретное значение - удаляем весь элемент
-				} elseif (in_array($value, $pointer)) {
+				} elseif (in_array($value, $pointer[$fieldName])) {
 					self::removeValue($pointer[$fieldName], $value);
 				}
 				break;
