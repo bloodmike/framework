@@ -26,12 +26,19 @@ class Context {
     
     /**
      * Получить массив параметров из указанного поля.
+     *
      * @param string $field поле параметров, из которого нужно получить массив
+     * @param bool $scalarAsValue использовать ли одиночное значение в качестве единственного элемента массива
+     *
      * @return array возвращает массив параметров или пустой массив в случае, когда указанного поля нет в списке или в поле содержится не массив
      */
-    public function getArray($field) {
-        if (array_key_exists($field, $this->data) && is_array($this->data[$field])) {
-            return $this->data[$field];
+    public function getArray($field, $scalarAsValue = false) {
+        if (array_key_exists($field, $this->data)) {
+            if (is_array($this->data[$field])) {
+                return $this->data[$field];
+            } elseif ($scalarAsValue) {
+                return array($this->data[$field]);
+            }
         }
         
         return array();
@@ -39,11 +46,14 @@ class Context {
     
     /**
      * Получить из указанного поля массив уникальных положительных целых чисел.
+     *
      * @param string $field имя поля
+     * @param bool $scalarAsValue использовать ли одиночное значение в качестве единственного элемента массива
+     *
      * @return array возвращает массив уникальных положительных чисел из параметров запроса или пустой массив, если поле отсутствует или в нём содержится не массив
      */
-    public function getUnsignedIntUniqueArray($field) {
-        $arr = $this->getArray($field);
+    public function getUnsignedIntUniqueArray($field, $scalarAsValue = false) {
+        $arr = $this->getArray($field, $scalarAsValue);
         $keys = array();
         if (count($arr) > 0) {
             foreach ($arr as $id) {
