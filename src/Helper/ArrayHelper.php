@@ -122,10 +122,11 @@ abstract class ArrayHelper {
 	/**
 	 * @param array $from массив
 	 * @param string|string[] $field поле/список вложенных полей
+	 * @param mixed $value значение элемента, который требуется удалить (null - если нужно удалить элемент полностью)
 	 * 
 	 * @return array копия переданного массива без указанного элемента
 	 */
-	public static function withoutField(array $from, $field) {
+	public static function withoutField(array $from, $field, $value = null) {
 		if (!is_array($field)) {
 			$field = [$field];
 		}
@@ -135,12 +136,16 @@ abstract class ArrayHelper {
 		$index = 0;
 		
 		foreach ($field as $fieldName) {
-			if (!array_key_exists($fieldName, $pointer)) {
+			if (!is_array($pointer) || !array_key_exists($fieldName, $pointer)) {
 				// если элемент массива не найден - останавливаем
 				break;
 			} elseif ($index == count($field) - 1) {
 				// если это последний элемент вложенного поля - удаляем
-				unset($pointer[$fieldName]);
+				if ($value === null) {
+					unset($pointer[$fieldName]); // если не передано конкретное значение - удаляем весь элемент
+				} elseif (in_array($value, $pointer)) {
+					self::removeValue($pointer[$fieldName], $value);
+				}
 				break;
 			}
 			
@@ -149,5 +154,20 @@ abstract class ArrayHelper {
 		}
 		
 		return $copy;
+	}
+
+	/**
+	 * Удаляет из переданного массива все элементы с указанным значением
+	 *
+	 * @param array &$array массив
+	 * @param mixed $value удаляемое значение
+	 */
+	public static function removeValue(array &$array, $value) {
+		do {
+			$key = array_search($value, $array);
+			if ($key !== false) {
+				unset($array[$key]);
+			}
+		} while ($key !== false);
 	}
 }
