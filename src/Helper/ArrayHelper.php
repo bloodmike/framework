@@ -170,4 +170,13 @@ abstract class ArrayHelper {
 			}
 		} while ($key !== false);
 	}
+	
+	/**
+	 * @param array $params параметры url-запроса
+	 * 
+	 * @return string строка с параметрами без ключей: a[]=x&a[]=y вместо a[0]=x&a[1]=y
+	 */
+	public static function httpBuildQueryWithoutKeys(array $params) {
+		return preg_replace('/%5B[0-9]+%5D/simU', '%5B%5D', http_build_query($params));
+	}
 }
