@@ -132,6 +132,7 @@ class Router {
     public function execute($url, $domain, $requestMethod) {
         list($domainName, $subDomain) = $this->getDomainName($domain);
         $this->Container->set('current_domain_name', $domainName);
+        $this->Container->set('current_subdomain', $subDomain);
 
         if (array_key_exists($domainName, $this->GrouppedRoutes)) {
             foreach ($this->GrouppedRoutes[$domainName] as $Route) {

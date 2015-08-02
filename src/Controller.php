@@ -6,6 +6,7 @@ use Framework\Response\JsonResponse;
 use Framework\Response\RedirectResponse;
 use Framework\Response\Response;
 use Framework\Routing\Router;
+use Framework\Routing\RouteResult;
 use Framework\Service\Container;
 use JsonSerializable;
 use Framework\Context;
@@ -30,6 +31,11 @@ class Controller {
      * @var string имя маршрута, полученного роутером по текущей ссылке
      */
     protected $routeName;
+
+    /**
+     * @var string
+     */
+    protected $subDomain;
     
     /**
      * @var Router роутер
@@ -41,18 +47,19 @@ class Controller {
      */
     protected $container;
 
-
     /**
      * @param Context $context контекст вызова
      * @param Router $router роутер
      * @param string $routeName имя маршрута, полученного по ссылке из роутера
+     * @param string $subDomain
      * @param Container $container контейнер сервисов
      */
-    public final function __construct(Context $context, Router $router, $routeName, Container $container) {
+    public final function __construct(Context $context, Router $router, $routeName, $subDomain, Container $container) {
         $this->context = $context;
         $this->urlContext = new Context($_GET);
         $this->router = $router;
         $this->routeName = $routeName;
+        $this->subDomain = $subDomain;
         $this->container = $container;
     }
     
@@ -100,11 +107,12 @@ class Controller {
      * @param Context $context
      * @param Router $router
      * @param string $routeName
+     * @param string $subDomain
      * @param Container $container
      * 
      * @return Controller
      */
-    public static function createOne($className, Context $context, Router $router, $routeName, Container $container) {
-        return new $className($context, $router, $routeName, $container);
+    public static function createOne($className, Context $context, Router $router, $routeName, $subDomain, Container $container) {
+        return new $className($context, $router, $routeName, $subDomain, $container);
     }
 }
