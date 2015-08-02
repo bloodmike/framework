@@ -28,6 +28,6 @@
 	"type": "library",
     "config" : {
         "bin-dir": "bin",
-        "vendor-dir": "public/vendor"
+        "vendor-dir": "vendor"
     }
 }

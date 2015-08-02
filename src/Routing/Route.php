@@ -5,7 +5,8 @@ namespace Framework\Routing;
 use InvalidArgumentException;
 
 /**
- * Description of Route
+ * Маршрут.
+ * Логически связывает одну ссылку / формат запроса с контроллером системы.
  *
  * @author mkoshkin
  */
@@ -42,19 +43,27 @@ class Route {
     private $classMethodName = 'work';
     
     /**
+     * @deprecated лучше переходить на использование domainName
+     *
      * @var string
      */
     private $domain = '';
+
+    /**
+     * @var string
+     */
+    private $domainName = '';
     
     /**
      * @param array $parameters
      * @param bool $withDomain
+     * @param string $subDomain
      * 
      * @return string
      * 
      * @throws InvalidArgumentException
      */
-    public function build(array $parameters, $withDomain = false) {
+    public function build(array $parameters, $withDomain = false, $subDomain = '') {
         $url = $this->uri;
         
         foreach ($this->parameters as $parameterName) {
@@ -65,7 +74,7 @@ class Route {
             $url = str_replace('[' . $parameterName . ']', $parameters[$parameterName], $url);
         }
         
-        return ($withDomain ? 'http://' . $this->domain : '') . $url;
+        return ($withDomain ? 'http://' . ($subDomain != '' ? $subDomain.'.' : '') . $this->domain : '') . $url;
     }
 
 
@@ -77,37 +86,47 @@ class Route {
      * @return Route
      */
     public static function createFromArray($name, array $parameters, array $domains) {
-        $route = new self();
-        $route->name = $name;
+        $Route = new self();
+        $Route->name = $name;
         if (array_key_exists('uri', $parameters)) {
-            $route->uri = $parameters['uri'];
+            $Route->uri = $parameters['uri'];
         }
         
         $classParts = explode(':', $parameters['run'], 2);
         if (count($classParts) == 2 && $classParts[1] != '') {
-            $route->classMethodName = $classParts[1];
+            $Route->classMethodName = $classParts[1];
         }
-        $route->className = $classParts[0];
+        $Route->className = $classParts[0];
         if (array_key_exists('method', $parameters) && $parameters['method'] != '') {
-            $route->method = $parameters['method'];
+            $Route->method = $parameters['method'];
         }
         
         $domainName = 'default';
         if (array_key_exists('domain', $parameters) && $parameters['domain'] != '') {
             $domainName = $parameters['domain'];
         }
-        $route->domain = $domains[$domainName];
+        $Route->domainName = $domainName;
+        $Route->domain = $domains[$domainName];
         
         $partsTo = array();
-        preg_match_all('/\[([\da-z_]+)\]/ui', $route->uri, $partsTo);
+        preg_match_all('/\[([\da-z_]+)\]/ui', $Route->uri, $partsTo);
         foreach ($partsTo[1] as $part) {
-            $route->parameters[] = $part;
+            $Route->parameters[] = $part;
         }
         
-        return $route;
+        return $Route;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDomainName() {
+        return $this->domainName;
     }
     
     /**
+     * @deprecated лучше переходить на использование getDomainName
+     *
      * @return string
      */
     public function getDomain() {
@@ -116,19 +135,18 @@ class Route {
     
     /**
      * @param string $path
-     * @param string $domain
      * @param string $method
+     * @param string $subDomain
      * 
      * @return Route|null
      */
-    public function match($path, $domain, $method) {
-        if (($this->method !== null && $method != $this->method) || $domain != $this->domain) {
+    public function match($path, $method, $subDomain) {
+        if ($this->method !== null && $method != $this->method) {
             return null;
         }
         if ($this->uri != '') {
             $regexp = '/^' . str_replace('/', '\\/', preg_replace('/\[([\da-z_]+)\]/ui', '([\da-z_]+)', $this->uri)) . '$/ui';
-        }
-        else {
+        } else {
             $regexp = '/.*/ui';
         }
         
@@ -143,7 +161,7 @@ class Route {
                 $index++;
             }
             
-            $routeResult = new RouteResult($this->name, $this->className, $this->classMethodName, $parameters);
+            $routeResult = new RouteResult($this->name, $subDomain, $this->className, $this->classMethodName, $parameters);
         }
         
         return $routeResult;

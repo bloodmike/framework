@@ -8,11 +8,16 @@ namespace Framework\Routing;
  * @author mkoshkin
  */
 class RouteResult {
-    
+
     /**
      * @var string
      */
     private $routeName;
+
+    /**
+     * @var string
+     */
+    private $subDomain;
     
     /**
      * @var string
@@ -32,12 +37,14 @@ class RouteResult {
     /**
      * 
      * @param string $routeName
+     * @param string $subDomain
      * @param string $className
      * @param string $classMethodName
      * @param array $parameters
      */
-    public function __construct($routeName, $className, $classMethodName, array $parameters) {
+    public function __construct($routeName, $subDomain, $className, $classMethodName, array $parameters) {
         $this->routeName = $routeName;
+        $this->subDomain = $subDomain;
         $this->className = $className;
         $this->classMethodName = $classMethodName;
         $this->parameters = $parameters;
@@ -69,5 +76,12 @@ class RouteResult {
      */
     public function getRouteName() {
         return $this->routeName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubDomain() {
+        return $this->subDomain;
     }
 }
