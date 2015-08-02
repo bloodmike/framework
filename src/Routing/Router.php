@@ -161,12 +161,43 @@ class Router {
             throw new InvalidArgumentException('Не найдена ссылка [' . $routeName . ']');
         }
         
-        $currentDomain = '';
-        if ($this->Container->has('current_domain_name')) {
-            $currentDomain = $this->domains[$this->Container->get('current_domain_name')];
-        }
-        
+        $currentDomain = $this->getFullCurrentDomain();
+
         $route = $this->Routes[$routeName];
-        return $route->build($parameters, ($withDomain || $route->getDomain() != $currentDomain), $subDomain);
+        $newDomain = $this->getFullDomain($route->getDomainName(), $subDomain);
+
+        return $route->build($parameters, ($withDomain || $newDomain != $currentDomain) ? $newDomain : '');
+    }
+
+    /**
+     * @return string полный текущий домен
+     *
+     * @throws \RuntimeException если текущий домен/поддомен не выбраны
+     */
+    public function getFullCurrentDomain() {
+        return $this->getFullDomain(
+            $this->Container->get('current_domain_name'),
+            $this->Container->get('current_subdomain')
+        );
+    }
+
+    /**
+     * Формирует домен по указанному имени и поддомену
+     *
+     * @param string $domainName имя домена
+     * @param string $subDomain поддомен (если требуется и если поддерживается указанным доменом)
+     *
+     * @return string полный домен
+     *
+     * @throws \RuntimeException если домен с указанным именем не поддерживается
+     */
+    public function getFullDomain($domainName, $subDomain = '') {
+        if (!array_key_exists($domainName, $this->domains)) {
+            throw new \RuntimeException('Домен [' . $domainName . '] не поддерживается');
+        }
+
+        $subDomain .= ($subDomain != '') ? '.' : '';
+
+        return str_replace('*.', $subDomain, $this->domains[$domainName]);
     }
 }

@@ -56,14 +56,13 @@ class Route {
     
     /**
      * @param array $parameters
-     * @param bool $withDomain
-     * @param string $subDomain
+     * @param string $domain
      * 
      * @return string
      * 
      * @throws InvalidArgumentException
      */
-    public function build(array $parameters, $withDomain = false, $subDomain = '') {
+    public function build(array $parameters, $domain = '') {
         $url = $this->uri;
         
         foreach ($this->parameters as $parameterName) {
@@ -74,7 +73,7 @@ class Route {
             $url = str_replace('[' . $parameterName . ']', $parameters[$parameterName], $url);
         }
         
-        return ($withDomain ? 'http://' . ($subDomain != '' ? $subDomain.'.' : '') . $this->domain : '') . $url;
+        return ($domain != '' ? 'http://' . $domain : '') . $url;
     }
 
 
@@ -153,7 +152,7 @@ class Route {
         $routeResult = null;
         $resultTo = array();
         if (preg_match($regexp, $path, $resultTo)) {
-            // если переданный путь соврадает с шаблоном
+            // если переданный путь совпадает с шаблоном
             $parameters = [];
             $index = 0;
             foreach ($this->parameters as $parameter) {
