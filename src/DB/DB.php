@@ -267,12 +267,18 @@ class DB extends mysqli {
     
     /**
      * Обновить данные об объекте в базе
-     * @param   DBStorable   $obj   объект
-     * @param   array         $fields имена обновляемых полей
+     *
+     * @param   DBStorable      $obj   объект
+     * @param   string[]|string $fields имена обновляемых полей
+     *
      * @return  boolean см. DB::update
      */
-    public function objUpdate(DBStorable $obj, array $fields) {
+    public function objUpdate(DBStorable $obj, $fields) {
         $set = array();
+
+        if (!is_array($fields)) {
+            $fields = array($fields);
+        }
         foreach ($fields as $var) {
             $set['`' . $var . '`'] = $obj->serializeVar($var, $this);
         }
@@ -370,8 +376,6 @@ class DB extends mysqli {
         $r = parent::query($query, $resultmode);
         $this->lastQuery = $query;
         
-        //$delta = microtime(true) - $ts;
-        
 		if ($this->logging) {
             $this->dataSourceLogger->add(
                     'mysql',
@@ -380,13 +384,6 @@ class DB extends mysqli {
                     ($r instanceof mysqli_result) ? $r->num_rows : $this->affected_rows, 
                     $this->errno, 
                     $this->error);
-			/*$this->logs[] = array(
-				'query' => $query,
-				'time' => $delta,
-				'error' => $this->error,
-				'errno' => $this->errno,
-				'rows' => ($r instanceof mysqli_result) ? $r->num_rows : $this->affected_rows
-			);*/
 		}
         
         if ($r === false) {

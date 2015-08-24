@@ -21,7 +21,12 @@ class Route {
      * @var string[]
      */
     private $parameters = array();
-    
+
+    /**
+     * @var string[]
+     */
+    private $parametersRequirements = array();
+
     /**
      * @var string 
      */
@@ -112,7 +117,16 @@ class Route {
         foreach ($partsTo[1] as $part) {
             $Route->parameters[] = $part;
         }
-        
+
+        if (array_key_exists('requirements', $parameters) && is_array($parameters['requirements'])) {
+            $requirements = $parameters['requirements'];
+            foreach ($Route->parameters as $parameterName) {
+                if (array_key_exists($parameterName, $requirements)) {
+                    $Route->parametersRequirements[$parameterName] = $requirements[$parameterName];
+                }
+            }
+        }
+
         return $Route;
     }
 
@@ -137,32 +151,69 @@ class Route {
      * @param string $method
      * @param string $subDomain
      * 
-     * @return Route|null
+     * @return RouteResult|null
      */
     public function match($path, $method, $subDomain) {
         if ($this->method !== null && $method != $this->method) {
             return null;
         }
-        if ($this->uri != '') {
-            $regexp = '/^' . str_replace('/', '\\/', preg_replace('/\[([\da-z_]+)\]/ui', '([\da-z_]+)', $this->uri)) . '$/ui';
-        } else {
-            $regexp = '/.*/ui';
-        }
-        
-        $routeResult = null;
+
+        $RouteResult = null;
         $resultTo = array();
-        if (preg_match($regexp, $path, $resultTo)) {
+        if ($this->matchUri($path, $resultTo)) {
             // если переданный путь совпадает с шаблоном
-            $parameters = [];
+            $parameters = array();
             $index = 0;
             foreach ($this->parameters as $parameter) {
                 $parameters[ $parameter ] = $resultTo[$index + 1];
                 $index++;
             }
             
-            $routeResult = new RouteResult($this->name, $subDomain, $this->className, $this->classMethodName, $parameters);
+            $RouteResult = new RouteResult($this->name, $subDomain, $this->className, $this->classMethodName, $parameters);
         }
         
-        return $routeResult;
+        return $RouteResult;
+    }
+
+    /**
+     * @return string регулярное выражение для проверки ссылки на соответствие маршруту
+     */
+    public function buildRegexp() {
+        if (!$this->uri) {
+            return '/.*/ui';
+        }
+
+        $replacementsFrom = array('/');
+        $replacementsTo = array('\\/');
+
+        foreach ($this->parameters as $parameterName) {
+            if (array_key_exists($parameterName, $this->parametersRequirements)) {
+                $replacement = $this->parametersRequirements[$parameterName];
+                if ($replacement == 'n') {
+                    $replacement = '[1-9][\d]*';
+                }
+            } else {
+                $replacement = '[\da-z_]+';
+            }
+            $replacementsFrom[] = '[' . $parameterName . ']';
+            $replacementsTo[] = '(' . $replacement . ')';
+        }
+
+        return '/^' . str_replace($replacementsFrom, $replacementsTo, $this->uri) . '$/ui';
+    }
+
+    /**
+     * @param string $path
+     * @param array &$resultTo
+     *
+     * @return bool
+     */
+    private function matchUri($path, array &$resultTo) {
+        if (count($this->parameters) == 0) {
+            return !$this->uri || $path == $this->uri;
+        }
+
+        $regexp = $this->buildRegexp();
+        return preg_match($regexp, $path, $resultTo);
     }
 }
