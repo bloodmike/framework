@@ -18,7 +18,12 @@ abstract class Time {
 	 * Час
 	 */
 	const TIME_HOUR = 3600;
-	
+
+	/**
+	 * Минута
+	 */
+	const TIME_MINUTE = 60;
+
 	/**
 	 * Неделя
 	 */
@@ -30,14 +35,21 @@ abstract class Time {
 	private static $time = null;
 	
 	/**
+	 * @param int $round если требуется округлять полученное время, нужно передать количество секунд на округление
+	 *
 	 * @return int unix-время
 	 */
-	public static function get() {
+	public static function get($round = 0) {
 		if (self::$time !== null) {
-			return floor(self::$time / 1000);
+			$time = floor(self::$time / 1000);
+		} else {
+			$time = time();
 		}
-		
-		return time();
+
+		if ($round > 1) {
+			$time = $time - ($time % $round);
+		}
+		return $time;
 	}
 	
 	/**
