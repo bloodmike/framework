@@ -73,9 +73,28 @@ class MemcacheObj extends Memcache {
         
         return $result;
     }
-    
+
     /**
-     * 
+     * @param string $key
+     * @param mixed $value
+     * @param int $flag
+     * @param int $expire
+     *
+     * @return bool
+     */
+    public function add($key, $value, $flag = 0, $expire = 0) {
+        $microtimeFrom = microtime(true);
+        $result = parent::add($key, $value, $flag, $expire);
+        $this->dataSourceLogger->add(
+            'memcache',
+            $microtimeFrom,
+            'Add to [' . $key . '] value [' . $value . ']' . (($expire > 0) ? ' for [' . $expire . '] seconds' : ''),
+            $result, 0, '');
+
+        return $result;
+    }
+
+    /**
      * @param string $key
      * @param mixed $value
      * @param int $flag
