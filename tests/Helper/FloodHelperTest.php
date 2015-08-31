@@ -48,7 +48,7 @@ class FloodHelperTest extends PHPUnit_Framework_TestCase {
             ->willReturn(2);
 
         $FloodHelper = new FloodHelper($MemcacheObjMock);
-        $this->assertTrue($FloodHelper->checkFlood('ttt', '1/60,2/3600'));
+        $this->assertTrue($FloodHelper->checkFlood('ttt', '1/60,2/3600', FloodHelper::MODE_INCREMENT));
     }
 
     /**
@@ -70,6 +70,6 @@ class FloodHelperTest extends PHPUnit_Framework_TestCase {
             ->willReturn(4);
 
         $FloodHelper = new FloodHelper($MemcacheObjMock);
-        $this->assertFalse($FloodHelper->checkFlood('ttt', '2/60'));
+        $this->assertFalse($FloodHelper->checkFlood('ttt', '2/60', FloodHelper::MODE_INCREMENT));
     }
 }

@@ -11,6 +11,21 @@ use Framework\Memcache\MemcacheObj;
  */
 class FloodHelper {
     /**
+     * Режим проверки с увеличением значения
+     */
+    const MODE_INCREMENT = 0;
+
+    /**
+     * Режим проверки без увеличения значения
+     */
+    const MODE_CHECK = 1;
+
+    /**
+     * Режим очистки счетчиков
+     */
+    const MODE_CLEAR = 2;
+
+    /**
      * @var MemcacheObj
      */
     private $MemcacheObj;
@@ -25,60 +40,70 @@ class FloodHelper {
     /**
      * @param string $action название действия
      * @param string $limits строка с описанием лимитов
-     * @param int $userId ID пользователя
-     * @param bool $clear если нужно просто очистить лимиты, следует передать <b>TRUE</b>
+     * @param int $uid уникальный ID (например, пользователя)
+     * @param int $mode режим работы (см. константы FloodHelper::MODE_...)
+     * @param int $increment число, на которое нужно увеличить счетчик
      *
      * @return bool <b>TRUE</b> если все лимиты соблюдены, <b>FALSE</b> если хоть один не соблюден
      */
-    public function checkUserFlood($action, $limits, $userId, $clear = false) {
-        return $this->checkFloodInternal($action, $limits, 'flood_u_' . $userId, $clear);
+    public function checkUidFlood($action, $limits, $uid, $mode = self::MODE_CHECK, $increment = 1) {
+        return $this->checkFloodInternal($action, $limits, 'flood_u_' . $uid, $mode, $increment);
     }
 
     /**
      * @param string $action название действия
      * @param string $limits строка с описанием ограничений
      * @param string|null $ip IP-адрес исполнителя действия (null - текущий IP пользователя)
-     * @param bool $clear если нужно просто очистить лимиты, следует передать <b>TRUE</b>
+     * @param int $mode режим работы (см. константы FloodHelper::MODE_...)
+     * @param int $increment число, на которое нужно увеличить счетчик
      *
      * @return bool <b>TRUE</b> если все лимиты соблюдены, <b>FALSE</b> если хоть один не соблюден
      */
-    public function checkIpFlood($action, $limits, $ip = null, $clear = false) {
+    public function checkIpFlood($action, $limits, $ip = null, $mode = self::MODE_CHECK, $increment = 1) {
         if ($ip === null) {
             $ip = $this->getRealIp();
         }
-        return $this->checkFloodInternal($action, $limits, 'flood_ip_' . ip2long($ip), $clear);
+        return $this->checkFloodInternal($action, $limits, 'flood_ip_' . ip2long($ip), $mode, $increment);
     }
 
     /**
      * @param string $action название действия
      * @param string $limits лимиты
-     * @param bool $clear для очистки лимитов следует передать <b>TRUE</b>
+     * @param int $mode режим работы (см. константы FloodHelper::MODE_...)
+     * @param int $increment число, на которое нужно увеличить счетчик
      *
      * @return bool
      */
-    public function checkFlood($action, $limits, $clear = false) {
-        return $this->checkFloodInternal($action, $limits, 'flood_p_', $clear);
+    public function checkFlood($action, $limits, $mode = self::MODE_CHECK, $increment = 1) {
+        return $this->checkFloodInternal($action, $limits, 'flood_p_', $mode, $increment);
     }
 
     /**
      * @param string $action
      * @param string $limits
-     * @param string $key_prefix
-     * @param bool $clear
+     * @param string $keyPrefix
+     * @param int $mode
+     * @param int $increment
      *
      * @return bool
      */
-    private function checkFloodInternal($action, $limits, $key_prefix, $clear) {
+    protected function checkFloodInternal($action, $limits, $keyPrefix, $mode, $increment) {
         $result = true;
         $limitsArray = explode(',', $limits);
         foreach ($limitsArray as $limitPair) {
             $limitParts = $this->extractLimitParts($limitPair);
 
-            $key = $key_prefix . '_' . $action . '_' . implode('_', $limitParts);
-            if ($clear) {
+            $key = $keyPrefix . '_' . $action . '_' . implode('_', $limitParts);
+            if ($mode == self::MODE_CLEAR) {
                 $this->MemcacheObj->delete($key);
-            } elseif (!$this->processMC($key, $limitParts)) {
-                $result = false;
+            } elseif ($mode == self::MODE_CHECK) {
+                if (!$this->processMCSelect($key, $limitParts)) {
+                    $result = false;
+                }
+            } elseif ($mode == self::MODE_INCREMENT) {
+                if (!$this->processMCUpdate($key, $limitParts, $increment)) {
+                    $result = false;
+                }
             }
         }
 
@@ -102,18 +127,31 @@ class FloodHelper {
     }
 
     /**
+     * @param $key
+     * @param $limitParts
+     *
+     * @return bool
+     */
+    private function processMCSelect($key, $limitParts) {
+        $value = $this->MemcacheObj->get($key);
+        return ($value === false || $value <= $limitParts[0]);
+    }
+
+        /**
      * @param string $key ключ MC, где хранятся данные
      * @param int[] $limitParts пара чисел - ограничение по количеству действий на отрезок времени
+     * @param int $increment число, на которое нужно увеличить счетчик
      *
      * @return bool пройдена ли проверка ограничения успешно
      */
-    private function processMC($key, $limitParts) {
-        if ($this->MemcacheObj->add($key, 1, 0, $limitParts[1])) {
+    private function processMCUpdate($key, $limitParts, $increment) {
+
+        if ($this->MemcacheObj->add($key, $increment, 0, $limitParts[1])) {
             if (!$limitParts[0]) {
                 return false;
             }
         } elseif ($limitParts[0] > 1) {
-            $value = $this->MemcacheObj->increment($key, 1);
+            $value = $this->MemcacheObj->increment($key, $increment);
             if ($value !== false && $value > $limitParts[0]) {
                 return false;
             }
