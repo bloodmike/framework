@@ -62,12 +62,13 @@ class Route {
     /**
      * @param array $parameters
      * @param string $domain
+     * @param bool $https
      * 
      * @return string
      * 
      * @throws InvalidArgumentException
      */
-    public function build(array $parameters, $domain = '') {
+    public function build(array $parameters, $domain = '', $https = false) {
         $url = $this->uri;
         
         foreach ($this->parameters as $parameterName) {
@@ -77,8 +78,14 @@ class Route {
             
             $url = str_replace('[' . $parameterName . ']', $parameters[$parameterName], $url);
         }
-        
-        return ($domain != '' ? 'http://' . $domain : '') . $url;
+
+        if ($https) {
+            $protocol = 'https://';
+        } else {
+            $protocol = 'http://';
+        }
+
+        return ($domain != '' ? $protocol . $domain : '') . $url;
     }
 
 
@@ -150,10 +157,11 @@ class Route {
      * @param string $path
      * @param string $method
      * @param string $subDomain
+     * @param bool $https
      * 
      * @return RouteResult|null
      */
-    public function match($path, $method, $subDomain) {
+    public function match($path, $method, $subDomain, $https = false) {
         if ($this->method !== null && $method != $this->method) {
             return null;
         }
@@ -169,7 +177,7 @@ class Route {
                 $index++;
             }
             
-            $RouteResult = new RouteResult($this->name, $subDomain, $this->className, $this->classMethodName, $parameters);
+            $RouteResult = new RouteResult($this->name, $subDomain, $this->className, $this->classMethodName, $parameters, $https);
         }
         
         return $RouteResult;

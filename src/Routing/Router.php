@@ -42,7 +42,12 @@ class Router {
      * @var string
      */
     private $projectRootPrefix;
-    
+
+    /**
+     * @var bool
+     */
+    private $https;
+
     /**
      * @param string[]  $domains
      * @param Container $Container
@@ -50,6 +55,7 @@ class Router {
     public function __construct(array $domains, Container $Container) {
         $this->Routes = array();
         $this->GrouppedRoutes = array();
+        $this->https = false;
         $this->domains = $domains;
         $this->plainDomains = array();
         foreach ($this->domains as $domainName => $domain) {
@@ -64,7 +70,17 @@ class Router {
             $this->projectRootPrefix = $Container->getParameter('root_prefix');
         }
     }
-    
+
+    /**
+     * @param bool $https
+     *
+     * @return $this
+     */
+    public function setHttps($https) {
+        $this->https = $https;
+        return $this;
+    }
+
     /**
      * @param array $routesConfig
      * 
@@ -136,7 +152,7 @@ class Router {
 
         if (array_key_exists($domainName, $this->GrouppedRoutes)) {
             foreach ($this->GrouppedRoutes[$domainName] as $Route) {
-                $RouteResult = $Route->match($url, $requestMethod, $subDomain);
+                $RouteResult = $Route->match($url, $requestMethod, $subDomain, $this->https);
                 if ($RouteResult !== null) {
                     return $RouteResult;
                 }
@@ -163,10 +179,10 @@ class Router {
         
         $currentDomain = $this->getFullCurrentDomain();
 
-        $route = $this->Routes[$routeName];
-        $newDomain = $this->getFullDomain($route->getDomainName(), $subDomain);
+        $Route = $this->Routes[$routeName];
+        $newDomain = $this->getFullDomain($Route->getDomainName(), $subDomain);
 
-        return $route->build($parameters, ($withDomain || $newDomain != $currentDomain) ? $newDomain : '');
+        return $Route->build($parameters, ($withDomain || $newDomain != $currentDomain) ? $newDomain : '', $this->https);
     }
 
     /**

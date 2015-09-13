@@ -30,9 +30,14 @@ class RouteResult {
     private $classMethodName;
     
     /**
-     * @var array[string]
+     * @var string[]
      */
     private $parameters;
+
+    /**
+     * @var bool
+     */
+    private $https;
     
     /**
      * 
@@ -41,13 +46,15 @@ class RouteResult {
      * @param string $className
      * @param string $classMethodName
      * @param array $parameters
+     * @param bool $https
      */
-    public function __construct($routeName, $subDomain, $className, $classMethodName, array $parameters) {
+    public function __construct($routeName, $subDomain, $className, $classMethodName, array $parameters, $https) {
         $this->routeName = $routeName;
         $this->subDomain = $subDomain;
         $this->className = $className;
         $this->classMethodName = $classMethodName;
         $this->parameters = $parameters;
+        $this->https = $https;
     }
     
     /**
@@ -63,7 +70,14 @@ class RouteResult {
     public function getClassMethodName() {
         return $this->classMethodName;
     }
-    
+
+    /**
+     * @return bool
+     */
+    public function getHttps() {
+        return $this->https;
+    }
+
     /**
      * @return array[string]
      */
