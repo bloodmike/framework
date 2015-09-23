@@ -157,6 +157,28 @@ abstract class ArrayHelper {
 	}
 
 	/**
+	 * Добавляет в массив переданные переменные, если они не пустые.
+	 * Для строк - непустые строки, для чисел - отличные от нуля значения, null и false не добавляются;
+	 * объекты добавляются в любом случае, а массивы - только если они непустые.
+	 *
+	 * @param array &$to массив, куда надо добавлять значения
+	 * @param $_ один и более добавляемых параметров
+	 */
+	public static function addNotEmpty(array &$to, $_) {
+		$n = func_num_args();
+		for ($i = 1; $i < $n; $i++) {
+			$arg = func_get_arg($i);
+			if (is_string($arg) || is_int($arg) || is_float($arg)) {
+				if ($arg) {
+					$to[] = $arg;
+				}
+			} elseif ($arg === true || is_object($arg) || (is_array($arg) && count($arg))) {
+				$to[] = $arg;
+			}
+		}
+	}
+
+	/**
 	 * Удаляет из переданного массива все элементы с указанным значением
 	 *
 	 * @param array &$array массив

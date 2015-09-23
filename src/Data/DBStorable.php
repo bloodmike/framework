@@ -75,14 +75,12 @@ abstract class DBStorable {
     public function fetchKey($key, $value) {
         if (is_bool($this->$key)) {
             $this->$key = ((int)$value == 1);
-		}
-		elseif (is_array($this->$key)) {
+		} elseif (is_array($this->$key)) {
 			$this->$key = json_decode($value, true);
 			if (!is_array($this->$key)) {
 				$this->$key = array();
 			}
-		}
-        else {
+		} else {
             $this->$key = $value;
         }
     }
@@ -96,11 +94,9 @@ abstract class DBStorable {
     public function serializeVar($name, DB $db) {
         if (is_array($this->$name)) {
             return "'" . $db->real_escape_string(json_encode($this->$name, JSON_UNESCAPED_UNICODE)) . "'";
-        }
-        elseif (is_bool($this->$name)) {
+        } elseif (is_bool($this->$name)) {
             return $this->$name ? 1 : 0;
-        }
-        elseif ($this->$name === null) {
+        } elseif ($this->$name === null) {
             return 'NULL';
         }
         return "'" . $db->real_escape_string((string)$this->$name) . "'";
