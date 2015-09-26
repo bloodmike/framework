@@ -47,7 +47,12 @@ class Config {
      * @return mixed значение параметра с указанным именем
      */
     public function get($parameter) {
-        $parameterParts = explode('.', $parameter);
+        if (strpos($parameter, '|') !== false) {
+            $separator = '|';
+        } else {
+            $separator = '.';
+        }
+        $parameterParts = explode($separator, $parameter);
         $pointer =& $this->config;
         foreach ($parameterParts as $namePart) {
             if (!array_key_exists($namePart, $pointer)) {
