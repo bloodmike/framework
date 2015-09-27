@@ -64,8 +64,9 @@ class CreateCrontabCommand extends Command {
         $logPath = $this->context->getTrimmedString('log');
 
         $commandsInfo = $this->getExecutor()->getCommandsInfo();
-        foreach ($commandsInfo as $commandName => $commandClass) {
-            if ($commandClass == __CLASS__) {
+        foreach ($commandsInfo as $commandName => $commandData) {
+            $commandClass = (string)ArrayHelper::get($commandData, 'class', '');
+            if ($commandClass == __CLASS__ || !$commandClass) {
                 continue;
             }
             $Command = Command::createInstance($commandClass, $this->Container);
