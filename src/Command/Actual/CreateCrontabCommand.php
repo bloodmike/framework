@@ -87,7 +87,7 @@ class CreateCrontabCommand extends Command {
                         }
                     }
 
-                    $this->outputLn($period . ' ' . $phpPath . ' ' . $indexPath . ' ' . $parameters . ' ' . $log);
+                    $this->outputLn($period . ' ' . $phpPath . ' ' . $indexPath . ' ' . $commandName . ($parameters ? ' ' . $parameters : '') . ' ' . $log);
                 }
             }
         }
