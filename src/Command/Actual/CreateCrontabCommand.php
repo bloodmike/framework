@@ -82,7 +82,7 @@ class CreateCrontabCommand extends Command {
                     if ($logPath) {
                         $logName = $Command->getLogFilename($commandName);
                         if ($logName) {
-                            $log = '>> ' . $logPath . '/' . $logName . ' 2&>1';
+                            $log = '>> ' . $logPath . '/' . $logName . ' 2>&1';
                         }
                     }
 
