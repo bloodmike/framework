@@ -112,7 +112,7 @@ class CreateCrontabCommand extends Command {
                             break;
                         case CronCommand::ERROR_LOG_TO_ERROUT:
                             if ($errorLogFile) {
-                                $log .= ' 2>' . $errorLogFile;
+                                $log .= ' 2>>' . $errorLogFile;
                             }
                             break;
                         case CronCommand::ERROR_LOG_TO_FILE:
