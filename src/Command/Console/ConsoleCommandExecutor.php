@@ -81,9 +81,10 @@ class ConsoleCommandExecutor {
             
             // получаем параметры, с которыми команда запущена
             $ArgumentsData = $ConsoleCommandManager->parseArgs($Command->getArguments());
-            $Command
-                ->setArgs($ArgumentsData->getAll())
-                ->run();
+            $Command->setArgs($ArgumentsData->getAll());
+            $Command->runBefore();
+            $Command->run();
+            $Command->runAfter();
 
         } catch (Exception $Exception) {
             echo "[" . get_class($Exception) . "] " . $Exception->getMessage() . PHP_EOL;

@@ -121,10 +121,24 @@ abstract class Command {
     }
 
     /**
+     * Выполняется перед run
+     */
+    public function runBefore() {
+
+    }
+
+    /**
      * Исполняемая часть команды
      */
     abstract public function run();
-    
+
+    /**
+     * Выполняется после вызова run
+     */
+    public function runAfter() {
+
+    }
+
     /**
      * Вывод строки в консоль
      * 
