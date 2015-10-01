@@ -38,7 +38,7 @@ class CreateCrontabCommand extends Command {
             ->addArgument(
                 (new Argument())
                     ->setShortName('c')
-                    ->setShortName('config')
+                    ->setName('config')
                     ->setDescription('путь к файлу конфигурации php, с которым следует выполнять скрипт'))
             ->addArgument(
                 (new Argument())
