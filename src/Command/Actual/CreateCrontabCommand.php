@@ -44,7 +44,13 @@ class CreateCrontabCommand extends Command {
                 (new Argument())
                     ->setShortName('l')
                     ->setName('log')
-                    ->setDescription('путь к папке с файлами логов (если не передан - логи записываться не будут)'));
+                    ->setDescription('путь к папке с файлами логов (если не передан - логи записываться не будут)'))
+            ->addArgument(
+                (new Argument())
+                    ->setShortName('e')
+                    ->setName('error')
+                    ->setDescription('полный путь к файлу с логами ошибок (если не указан - будет использован файл из php.ini)')
+            );
     }
 
     /**
@@ -62,6 +68,7 @@ class CreateCrontabCommand extends Command {
         }
 
         $logPath = $this->context->getTrimmedString('log');
+        $errorLogFile = $this->context->getTrimmedString('error');
 
         $commandsInfo = $this->getExecutor()->getCommandsInfo();
         foreach ($commandsInfo as $commandName => $commandData) {
@@ -79,15 +86,33 @@ class CreateCrontabCommand extends Command {
                     }
                     $parameters = ArrayHelper::get($periodData, 1, '');
 
+                    $errorLogDst = $Command->getErrorLogDst();
+
                     $log = '';
                     if ($logPath) {
                         $logName = $Command->getLogFilename($commandName);
                         if ($logName) {
-                            $log = '>> ' . $logPath . '/' . $logName . ' 2>&1';
+                            $log = ' >> ' . $logPath . '/' . $logName;
                         }
                     }
 
-                    $this->outputLn($period . ' ' . $phpPath . ' ' . $indexPath . ' ' . $commandName . ($parameters ? ' ' . $parameters : '') . ' ' . $log);
+                    switch ($errorLogDst) {
+                        case CronCommand::ERROR_LOG_TO_NULL:
+                            $log .= ' 2>/dev/null';
+                            break;
+                        case CronCommand::ERROR_LOG_TO_ERROUT:
+                            if ($errorLogFile) {
+                                $log .= ' 2>' . $errorLogFile;
+                            }
+                            break;
+                        case CronCommand::ERROR_LOG_TO_FILE:
+                            if ($log) {
+                                $log .= ' 2>&1';
+                            }
+                        break;
+                    }
+
+                    $this->outputLn($period . ' ' . $phpPath . ' ' . $indexPath . ' ' . $commandName . ($parameters ? ' ' . $parameters : '') . $log);
                 }
             }
         }

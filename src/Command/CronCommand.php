@@ -9,6 +9,22 @@ namespace Framework\Command;
  * @author mkoshkin
  */
 abstract class CronCommand extends Command {
+
+    /**
+     * Отправлять ошибки в /dev/null
+     */
+    const ERROR_LOG_TO_NULL = 0;
+
+    /**
+     * Отправлять ошибки по настройкам php или в указанный файл ошибок
+     */
+    const ERROR_LOG_TO_ERROUT = 1;
+
+    /**
+     * Отправлять ошибки в общий файл логов скрипта (если файл не указан - будут оправлены в стандартный поток ошибок)
+     */
+    const ERROR_LOG_TO_FILE = 2;
+
     /**
      * @return array периоды выполнения команды и параметры выполнения:
      *                  [
@@ -35,5 +51,12 @@ abstract class CronCommand extends Command {
      */
     public function getLogFilename($name) {
         return str_replace(':', '_', $name) . '.log';
+    }
+
+    /**
+     * @return int направление, куда отправлять логи ошибок
+     */
+    public function getErrorLogDst() {
+        return self::ERROR_LOG_TO_ERROUT;
     }
 }
