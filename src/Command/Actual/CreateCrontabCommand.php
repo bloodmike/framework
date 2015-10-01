@@ -37,6 +37,11 @@ class CreateCrontabCommand extends Command {
                     ->setDescription('полный путь к php (по умолчанию - константа PHP_BINARY)'))
             ->addArgument(
                 (new Argument())
+                    ->setShortName('c')
+                    ->setShortName('config')
+                    ->setDescription('путь к файлу конфигурации php, с которым следует выполнять скрипт'))
+            ->addArgument(
+                (new Argument())
                     ->setShortName('i')
                     ->setName('index')
                     ->setDescription('полный путь к index.php (по умолчанию - getcwd() . "/index.php")'))
@@ -68,6 +73,11 @@ class CreateCrontabCommand extends Command {
         }
 
         $logPath = $this->context->getTrimmedString('log');
+
+        $phpConfigFile = $this->context->getTrimmedString('config');
+        if ($phpConfigFile) {
+            $phpPath .= ' -c ' . $phpConfigFile;
+        }
         $errorLogFile = $this->context->getTrimmedString('error');
 
         $commandsInfo = $this->getExecutor()->getCommandsInfo();
