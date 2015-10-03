@@ -26,6 +26,11 @@ abstract class CronCommand extends Command {
     const ERROR_LOG_TO_FILE = 2;
 
     /**
+     * Никуда специально не отправлять ошибки
+     */
+    const ERROR_LOG_NOWHERE = 3;
+
+    /**
      * @return array периоды выполнения команды и параметры выполнения:
      *                  [
      *                      ['10,40 * * * *', '-l 12 --delay 500'],
