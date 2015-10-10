@@ -3,7 +3,7 @@
 namespace Framework\Response;
 
 /**
- * Description of RedirectResponse
+ * Ответ, подразумевающий редирект на другую страницу
  *
  * @author mkoshkin
  */
@@ -15,7 +15,7 @@ class RedirectResponse implements ResponseInterface {
     private $url;
     
     /**
-     * @var int 
+     * @var int
      */
     private $code;
     
@@ -27,7 +27,26 @@ class RedirectResponse implements ResponseInterface {
         $this->url = $url;
         $this->code = $code;
     }
-    
+
+    /**
+     * @return bool есть ли в ссылке GET-параметры (просто наличие знака ? тоже считается наличием параметров)
+     */
+    public function hasQuery() {
+        return strpos($this->url, '?') !== false;
+    }
+
+    /**
+     * Добавить указанную подстроку к ссылке справа
+     *
+     * @param string $urlPart строка, добавляемая к ссылке
+     *
+     * @return $this
+     */
+    public function append($urlPart) {
+        $this->url .= $urlPart;
+        return $this;
+    }
+
     /**
      * @inheritdoc
      */
