@@ -59,6 +59,13 @@ class CreateCrontabCommand extends Command {
     }
 
     /**
+     * @return string путь к папке с логами крон-скриптов
+     */
+    protected function getLogPath() {
+        return $this->context->getTrimmedString('log');
+    }
+
+    /**
      * @inheritdoc
      */
     public function run() {
@@ -72,7 +79,7 @@ class CreateCrontabCommand extends Command {
             $indexPath = getcwd() . '/index.php';
         }
 
-        $logPath = $this->context->getTrimmedString('log');
+        $logPath = $this->getLogPath();
 
         $phpConfigFile = $this->context->getTrimmedString('config');
         if ($phpConfigFile) {
