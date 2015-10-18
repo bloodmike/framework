@@ -66,26 +66,51 @@ class CreateCrontabCommand extends Command {
     }
 
     /**
-     * @inheritdoc
+     * @return string путь к исполняемому файлу php
      */
-    public function run() {
+    protected function getPhpBinary() {
         $phpPath = $this->context->getTrimmedString('php');
         if (!$phpPath) {
             $phpPath = PHP_BINARY;
         }
+        return $phpPath;
+    }
 
+    /**
+     * @return string путь к исполняемому файлу index.php
+     */
+    protected function getIndexPhpFile() {
         $indexPath = $this->context->getTrimmedString('index');
         if (!$indexPath) {
             $indexPath = getcwd() . '/index.php';
         }
+        return $indexPath;
+    }
 
-        $logPath = $this->getLogPath();
+    /**
+     * @return string путь к логу для ошибок скриптов, направляющих свои ошибки в общий файл
+     */
+    protected function getErrorLogFile() {
+        return $this->context->getTrimmedString('error');
+    }
 
-        $phpConfigFile = $this->context->getTrimmedString('config');
+    /**
+     * @return string путь к файлу с конфигурацией php
+     */
+    protected function getPhpConfigFile() {
+        return $this->context->getTrimmedString('config');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function run() {
+        $phpPath = $this->getPhpBinary();
+        $indexPath = $this->getIndexPhpFile();
+        $phpConfigFile = $this->getPhpConfigFile();
         if ($phpConfigFile) {
             $phpPath .= ' -c ' . $phpConfigFile;
         }
-        $errorLogFile = $this->context->getTrimmedString('error');
 
         $commandsInfo = $this->getExecutor()->getCommandsInfo();
         foreach ($commandsInfo as $commandName => $commandData) {
@@ -103,35 +128,44 @@ class CreateCrontabCommand extends Command {
                     }
                     $parameters = ArrayHelper::get($periodData, 1, '');
 
-                    $errorLogDst = $Command->getErrorLogDst();
-
-                    $log = '';
-                    if ($logPath) {
-                        $logName = $Command->getLogFilename($commandName);
-                        if ($logName) {
-                            $log = ' >> ' . $logPath . '/' . $logName;
-                        }
-                    }
-
-                    switch ($errorLogDst) {
-                        case CronCommand::ERROR_LOG_TO_NULL:
-                            $log .= ' 2>/dev/null';
-                            break;
-                        case CronCommand::ERROR_LOG_TO_ERROUT:
-                            if ($errorLogFile) {
-                                $log .= ' 2>>' . $errorLogFile;
-                            }
-                            break;
-                        case CronCommand::ERROR_LOG_TO_FILE:
-                            if ($log) {
-                                $log .= ' 2>&1';
-                            }
-                        break;
-                    }
-
+                    $log = $this->getCommandLogAppendix($Command->getLogFilename($commandName), $Command->getErrorLogDst());
                     $this->outputLn($period . ' ' . $phpPath . ' ' . $indexPath . ' ' . $commandName . ($parameters ? ' ' . $parameters : '') . $log);
                 }
             }
         }
+    }
+
+    /**
+     * @param string $logFileName имя файла логов команды
+     * @param int $errorLogDestination направление для логов ошибок команды (см CronCommand::ERROR_LOG_TO_...)
+     *
+     * @return string строка с направлениями потоков вывода в нужные файлы
+     */
+    protected function getCommandLogAppendix($logFileName, $errorLogDestination) {
+        $log = '';
+
+        $logPath = $this->getLogPath();
+        if ($logPath && $logFileName) {
+            $log = ' >> ' . $logPath . '/' . $logFileName;
+        }
+
+        switch ($errorLogDestination) {
+            case CronCommand::ERROR_LOG_TO_NULL:
+                $log .= ' 2>/dev/null';
+                break;
+            case CronCommand::ERROR_LOG_TO_ERROUT:
+                $errorLogFile = $this->getErrorLogFile();
+                if ($errorLogFile) {
+                    $log .= ' 2>>' . $errorLogFile;
+                }
+                break;
+            case CronCommand::ERROR_LOG_TO_FILE:
+                if ($log) {
+                    $log .= ' 2>&1';
+                }
+                break;
+        }
+
+        return $log;
     }
 }
