@@ -65,10 +65,11 @@ class DB extends mysqli {
      * 
      * @param array $sql исходный массив, экранируются только значения
      * @param int $commentMode режим экранирования (см. DB::ARR_...)
+     * @param bool $quoteNames обводить ли имена столбцов апострофами
      * 
      * @return array итоговый массив с экранированными значениями
      */
-    public function arr2sql(array $sql, $commentMode = self::ARR_QUOTE_ESCAPE) {
+    public function arr2sql(array $sql, $commentMode = self::ARR_QUOTE_ESCAPE, $quoteNames = false) {
         
         if ($commentMode !=self::ARR_ESCAPE && $commentMode != self::ARR_QUOTE_ESCAPE) {
             $commentMode = self::ARR_QUOTE_ESCAPE;
@@ -78,6 +79,9 @@ class DB extends mysqli {
         
         foreach ($sql as $k => $v) {
             $val = $this->escape_string($v);
+            if ($quoteNames) {
+                $k = '`' . $k . '`';
+            }
             if ($commentMode == self::ARR_QUOTE_ESCAPE) {
                 $val = "'" . $val . "'";
 			}

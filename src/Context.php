@@ -98,15 +98,28 @@ class Context {
     
     /**
      * Получить целочисленное значение из параметров запроса.
+     *
      * @param   string $field имя поля
+     * @param   int|null $min если число - минимально допустимое значение
+     * @param   int|null $max если число - максимально допустимое значение
+     *
      * @return  int целое число из параметров или 0 если поля нет в списке параметров
      */
-    public function getInt($field) {
+    public function getInt($field, $min = null, $max = null) {
         if (array_key_exists($field, $this->data)) {
-            return (int)$this->data[$field];
+            $v = (int)$this->data[$field];
+        } else {
+            $v = 0;
         }
-        
-        return 0;
+
+        if ($min !== null) {
+            $v = max($min, $v);
+        }
+
+        if ($max !== null) {
+            $v = min($max, $v);
+        }
+        return $v;
     }
     
     /**
