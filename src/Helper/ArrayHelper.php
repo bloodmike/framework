@@ -212,7 +212,7 @@ abstract class ArrayHelper {
 	public static function httpQuerySurround($query, $before = true, $after = true) {
 		if ($before) {
 			$query = ltrim($query, '?');
-			if ($query) {
+			if ($query || $after) {
 				$query = '?' . $query;
 			}
 		}
