@@ -201,4 +201,27 @@ abstract class ArrayHelper {
 	public static function httpBuildQueryWithoutKeys(array $params) {
 		return preg_replace('/%5B[0-9]+%5D/simU', '%5B%5D', http_build_query($params));
 	}
+
+	/**
+	 * @param string $query url-запрос
+	 * @param bool $before нужно ли проверять и выставлять знак вопроса в начале строки
+	 * @param bool $after нужно ли проверять и выставлять знак & в конце строки
+	 *
+	 * @return string строка url-запроса с проставленным слева "?" и справа "&"
+	 */
+	public static function httpQuerySurround($query, $before = true, $after = true) {
+		if ($before) {
+			$query = ltrim($query, '?');
+			if ($query) {
+				$query = '?' . $query;
+			}
+		}
+		if ($after) {
+			$query = rtrim($query, '&');
+			if ($query != '?' || $query == '' && !$before) {
+				$query .= '&';
+			}
+		}
+		return $query;
+	}
 }
