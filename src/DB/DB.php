@@ -78,9 +78,9 @@ class DB extends mysqli {
         $sqlResult = array();
         
         foreach ($sql as $k => $v) {
-            $val = $this->escape_string($v);
+            $val = $this->real_escape_string($v);
             if ($quoteNames) {
-                $k = '`' . $k . '`';
+                $k = '`' . trim($k, '`') . '`';
             }
             if ($commentMode == self::ARR_QUOTE_ESCAPE) {
                 $val = "'" . $val . "'";
@@ -90,7 +90,6 @@ class DB extends mysqli {
         }
         
         return $sqlResult;
-        
     }
     
     /**
@@ -316,7 +315,19 @@ class DB extends mysqli {
         
         return false;
     }
-    
+
+    /**
+     * @param string $table
+     * @param array $set
+     * @param int $mode
+     * @param bool $delayed
+     *
+     * @return bool
+     */
+    public function safeInsert($table, array $set, $mode = self::MODE_INSERT, $delayed = false) {
+        return $this->insert($table, $this->arr2sql($set, self::ARR_QUOTE_ESCAPE, true), $mode, $delayed);
+    }
+
     /**
      * Изменить у указанного объекта значения числовых полей и сохранить изменения в базу.
      * @param   DBStorable  $object объект
