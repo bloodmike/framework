@@ -54,6 +54,7 @@ abstract class Command {
         $this->context = new Context($this->args);
         $this->description = '';
         $this->namesMap = [];
+        $this->addArgument(Argument::create(Argument::HELP_NAME, '', 'Вывод справки', false));
         $this->configure();
     }
     
@@ -96,7 +97,10 @@ abstract class Command {
         if ($shortName != '' && array_key_exists($shortName, $this->namesMap)) {
             throw new InvalidArgumentException('Имя параметра [' . $shortName . '] уже занято для этой команды');
         }
-        
+        if (!$name && !$shortName) {
+            throw new InvalidArgumentException('У параметра не указано имя');
+        }
+
         $this->Arguments[] = $Argument;
         return $this;
     }
@@ -111,6 +115,13 @@ abstract class Command {
     protected function setDescription($description) {
         $this->description = $description;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription() {
+        return $this->description;
     }
 
     /**

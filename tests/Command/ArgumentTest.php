@@ -43,7 +43,6 @@ class ArgumentTest extends PHPUnit_Framework_TestCase {
             ['a'],
             ['--zyid'],
             ['-123mogo'],
-            [Argument::HELP_NAME],
         ];
     }
     

@@ -39,7 +39,22 @@ class ArgumentsData {
         
         return $this;
     }
-    
+
+    /**
+     * Устанавливает значение параметра, если он уже есть в списке
+     *
+     * @param string $name имя параметра
+     * @param mixed $value устанавливаемое значение
+     *
+     * @return $this
+     */
+    public function set($name, $value) {
+        if (array_key_exists($name, $this->data)) {
+            $this->data[$name] = $value;
+        }
+        return $this;
+    }
+
     /**
      * Переносит данные из одного поля в другое, после чего удаляет первое поле.
      * Если первого поля нет - ничего не происходит.

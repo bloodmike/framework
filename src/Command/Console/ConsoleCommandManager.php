@@ -27,15 +27,12 @@ class ConsoleCommandManager {
     
     /**
      * @return string имя вызываемой команды
-     * 
-     * @return RuntimeException если имя команды не передано
      */
     public function getCommandName() {
-        if (!array_key_exists(1, $this->argv) || $this->argv[1] == '') {
-            throw new RuntimeException('Имя команды не передано');
+        if (array_key_exists(1, $this->argv)) {
+            return $this->argv[1];
         }
-        
-        return $this->argv[1];
+        return '';
     }
     
     /**
@@ -52,9 +49,11 @@ class ConsoleCommandManager {
                 $ArgumentsData->merge(
                         $Argument->getShortName(), 
                         $Argument->getName());
-                
-                $bestNames[$Argument->getBestName()] = true;
             }
+            if (!$Argument->getHasValue()) {
+                $ArgumentsData->set($Argument->getBestName(), 1);
+            }
+            $bestNames[$Argument->getBestName()] = true;
         }
         
         $removeNames = [];
@@ -67,7 +66,7 @@ class ConsoleCommandManager {
         foreach ($removeNames as $name) {
             $ArgumentsData->remove($name);
         }
-        
+
         return $ArgumentsData;
     }
 }

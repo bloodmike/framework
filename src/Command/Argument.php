@@ -2,6 +2,8 @@
 
 namespace Framework\Command;
 
+use InvalidArgumentException;
+
 /**
  * Параметр команды.
  * Элемент данных, который содержит информацию об одном параметре конкретной команды.
@@ -28,16 +30,41 @@ class Argument {
      * @var string описание команды
      */
     private $description;
-    
+
+    /**
+     * @var bool должно ли у параметра быть значение
+     */
+    private $hasValue;
+
     /**
      * @param string $description описание команды
      */
     public function __construct($description = "") {
         $this->name = '';
         $this->shortName = '';
+        $this->hasValue = true;
         $this->description = $description;
     }
-    
+
+    /**
+     * @param string $name
+     * @param string $shortName
+     * @param string $description
+     * @param bool $hasValue
+     *
+     * @return Argument
+     */
+    public static function create($name, $shortName = '', $description = '', $hasValue = true) {
+        $Argument = (new self($description))->setHasValue($hasValue);
+        if ($name) {
+            $Argument->setName($name);
+        }
+        if ($shortName) {
+            $Argument->setShortName($shortName);
+        }
+        return $Argument;
+    }
+
     /**
      * Назначить параметру полное имя, передаваемое через --ИМЯ_ПАРАМЕТРА
      * 
@@ -45,23 +72,19 @@ class Argument {
      * 
      * @return $this
      * 
-     * @throws \InvalidArgumentException при совпадении имени команды с зарезервированным 
+     * @throws InvalidArgumentException при совпадении имени команды с зарезервированным
      *                                  или при некорректном его формате (должно быть длиннее 1 символа и состоять 
      *                                  только из a-z, A-Z, 0-9)
      */
     public function setName($name) {
         if (!preg_match('/^[\da-z]{2,}$/ui', $name)) {
-            throw new \InvalidArgumentException('Имя параметра [' . $name . '] некорректно');
-        }
-        
-        if ($name == self::HELP_NAME) {
-            throw new \InvalidArgumentException('Имя параметра [' . $name . '] зарезервировано');
+            throw new InvalidArgumentException('Имя параметра [' . $name . '] некорректно');
         }
         
         $this->name = $name;
         return $this;
     }
-    
+
     /**
      * Назначить параметру короткое имя, передаваемое через -ИМЯ
      * 
@@ -69,11 +92,11 @@ class Argument {
      * 
      * @return $this
      * 
-     * @throws \InvalidArgumentException при некорректном формате имени команды
+     * @throws InvalidArgumentException при некорректном формате имени команды
      */
     public function setShortName($shortName) {
         if (!preg_match('/^[\da-z]$/ui', $shortName)) {
-            throw new \InvalidArgumentException('Короткое имя параметра [' . $shortName . '] некорректно');
+            throw new InvalidArgumentException('Короткое имя параметра [' . $shortName . '] некорректно');
         }
         
         $this->shortName = $shortName;
@@ -91,7 +114,26 @@ class Argument {
         $this->description = $description;
         return $this;
     }
-    
+
+    /**
+     * Установить, требуется ли указывать значение параметра
+     *
+     * @param bool $val нужно ли указывать значение параметра
+     *
+     * @return $this
+     */
+    public function setHasValue($val) {
+        $this->hasValue = (bool)$val;
+        return $this;
+    }
+
+    /**
+     * @return bool нужно ли указывать значение параметра
+     */
+    public function getHasValue() {
+        return $this->hasValue;
+    }
+
     /**
      * @return string имя параметра
      */

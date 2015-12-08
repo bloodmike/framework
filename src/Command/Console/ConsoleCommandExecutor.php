@@ -4,8 +4,8 @@ namespace Framework\Command\Console;
 
 use Exception;
 use Framework\Command\Actual\CreateCrontabCommand;
+use Framework\Command\Actual\ListCommand;
 use Framework\Command\Command;
-use Framework\Command\Console\ConsoleCommandManager;
 use Framework\Service\Container;
 use RuntimeException;
 
@@ -36,6 +36,9 @@ class ConsoleCommandExecutor {
         $this->commandsInfo = [
             'framework:crontab:create' => [
                 'class' => CreateCrontabCommand::class
+            ],
+            'list' => [
+                'class' => ListCommand::class
             ],
         ];
     }
