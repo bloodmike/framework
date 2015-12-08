@@ -180,7 +180,7 @@ class Argument {
             if (preg_match('/^\-([\da-z])$/ui', $arg, $to) || preg_match('/^\-\-([\da-z]{2,})$/ui', $arg, $to)) {
                 // имя команды
                 if ($lastArgumentName !== null) {
-                    $ArgumentsData->add($lastArgumentName, null);
+                    $ArgumentsData->add($lastArgumentName, '');
                 }
                 $lastArgumentName = $to[1];
             } elseif ($lastArgumentName !== null) {
@@ -191,7 +191,7 @@ class Argument {
         }
         
         if ($lastArgumentName !== null) {
-            $ArgumentsData->add($lastArgumentName, null);
+            $ArgumentsData->add($lastArgumentName, '');
         }
         
         return $ArgumentsData;
