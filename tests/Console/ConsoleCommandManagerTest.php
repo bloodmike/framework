@@ -44,6 +44,24 @@ class ConsoleCommandManagerTest extends PHPUnit_Framework_TestCase {
                 [],
             ],
             [
+                ['--help'],
+                [
+                    Argument::create('help', '', '', false),
+                ],
+                [
+                    'help' => 1,
+                ],
+            ],
+            [
+                ['-h'],
+                [
+                    Argument::create('help', 'h', '', false),
+                ],
+                [
+                    'help' => 1,
+                ],
+            ],
+            [
                 ['--help', '2'],
                 [
                     Argument::create('help', '', '', false),

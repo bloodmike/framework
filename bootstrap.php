@@ -8,8 +8,7 @@ spl_autoload_register(function($className) {
         if ($explode[1] == 'TestCases') {
             unset($explode[0], $explode[1]);
             require_once('tests/' . implode('/', $explode) . '.php');
-        }
-        else {
+        } else {
             $explode[0] = 'src';
             require_once(implode('/', $explode) . '.php');
         }

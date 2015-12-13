@@ -26,7 +26,7 @@ class ListCommand extends Command {
     public function configure() {
          $this
              ->setDescription('Вывод списка доступных команд')
-             ->addArgument(Argument::create('quiet', 'q', 'Выводить только названия команд', true));
+             ->addArgument(Argument::create('quiet', 'q', 'Выводить только названия команд', false));
     }
 
     /**

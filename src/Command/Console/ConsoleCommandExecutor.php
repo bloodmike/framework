@@ -34,10 +34,10 @@ class ConsoleCommandExecutor {
 
         // добавляем в список команд фреймворковые команды
         $this->commandsInfo = [
-            'framework:crontab:create' => [
+            'framework:crontab:create' => [ // команда для сборки crontab'а проекта
                 'class' => CreateCrontabCommand::class
             ],
-            'list' => [
+            'list' => [ // команда для вывода списка команд
                 'class' => ListCommand::class
             ],
         ];
@@ -73,7 +73,9 @@ class ConsoleCommandExecutor {
             
             // получаем объект команды
             $commandName = $ConsoleCommandManager->getCommandName();
-            if (!array_key_exists($commandName, $this->commandsInfo)) {
+            if (!$commandName) {
+                $commandName = 'list';
+            } elseif (!array_key_exists($commandName, $this->commandsInfo)) {
                 throw new RuntimeException('Команда [' . $commandName . '] не найдена');
             }
             

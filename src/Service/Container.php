@@ -39,11 +39,15 @@ class Container {
     
     /**
      * @param string $environment имя окружения
-	 * @param string $path путь к файлам конфигурации
+	 * @param array|string $configSrc массив - параметры конфигурации, строка - путь к файлам конфигурации
+     * @param array|null $services массив с описанием служб (если null - описание берется из ./services.php)
      */
-    public function __construct($environment, $path = './../config/') {
-        $this->Config = new Config(require_once($path . $environment . '.php'));
-        $this->services = require_once('./services.php');
+    public function __construct($environment, $configSrc = './../config/', array $services = null) {
+        if (is_string($configSrc)) {
+            $configSrc = require_once($configSrc . $environment . '.php');
+        }
+        $this->Config = new Config($configSrc);
+        $this->services = ($services !== null) ? $services : require_once('./services.php');
         $this->instances = array();
 		$this->customServices = array();
         
@@ -56,7 +60,18 @@ class Container {
             self::$inst = $this;
         }
     }
-    
+
+    /**
+     * @param string $environment
+     * @param string $configPath
+     * @param string $servicesPath
+     *
+     * @return self
+     */
+    public static function create($environment, $configPath = './../config/', $servicesPath = './services.php') {
+        return new self('', require_once($configPath . $environment . '.php'), require_once($servicesPath));
+    }
+
     /**
      * Очищает контейнер от всех объектов
      */
