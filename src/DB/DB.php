@@ -437,4 +437,17 @@ class DB extends mysqli {
         
         return true;
     }
+
+    /**
+     * @param string $string
+     * @param bool|false $forLike
+     * 
+     * @return string
+     */
+    public function real_escape_string($string, $forLike = false) {
+        if ($forLike) {
+            $string = str_replace(array("_", "%"), array('\\_', '\\%'), $string);
+        }
+        return parent::real_escape_string($string);
+    }
 }
