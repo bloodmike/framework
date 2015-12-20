@@ -441,7 +441,7 @@ class DB extends mysqli {
     /**
      * @param string $string
      * @param bool|false $forLike
-     * 
+     *
      * @return string
      */
     public function real_escape_string($string, $forLike = false) {

@@ -87,8 +87,10 @@ abstract class DBStorable {
     
     /**
      * Сериализовать значение поля объекта для сохранения в базу
+     *
      * @param String $name имя поля
      * @param DB $db
+     * 
      * @return String строка с сериализованными данными, должна правильно восстанавливаться методом fetchKey
      */
     public function serializeVar($name, DB $db) {
@@ -100,5 +102,23 @@ abstract class DBStorable {
             return 'NULL';
         }
         return "'" . $db->real_escape_string((string)$this->$name) . "'";
+    }
+
+    /**
+     * @param array $list массив сырых данных
+     * @param bool $keepKeys сохранять ли соответствие ключей и строк массива при создании объектов
+     *
+     * @return static[] массив объектов класса
+     */
+    public static function fetchList(array $list, $keepKeys = true) {
+        $result = [];
+        foreach ($list as $k => $row) {
+            if ($keepKeys) {
+                $result[$k] = new static($row);
+            } else {
+                $result[] = new static($row);
+            }
+        }
+        return $result;
     }
 }
