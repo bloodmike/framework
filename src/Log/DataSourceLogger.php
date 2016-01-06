@@ -11,12 +11,12 @@ class DataSourceLogger {
     /**
      * @var int[] количество обращений к разным источникам
      */
-    public $counts;
+    private $counts;
 
     /**
      * @var float[] суммарное время на выполнение операций
      */
-    public $times;
+    private $times;
 
     /**
      * @var array
@@ -84,5 +84,47 @@ class DataSourceLogger {
     public function setVerbose($val) {
         $this->verbose = (bool)$val;
         return $this;
+    }
+
+    /**
+     * @param string|null $source название источника событий (null - все источники)
+     *
+     * @return int количество зафиксированных событий
+     */
+    public function getCount($source = null) {
+        if ($source === null) {
+            return array_sum($this->counts);
+        }
+        if (array_key_exists($source, $this->counts)) {
+            return $this->counts[$source];
+        }
+        return 0;
+    }
+
+    /**
+     * @param string|null $source название источника событий (null - все источники)
+     *
+     * @return float суммарное время выполнения зафиксированных событий
+     */
+    public function getTime($source = null) {
+        if ($source === null) {
+            return array_sum($this->times);
+        }
+        if (array_key_exists($source, $this->times)) {
+            return $this->times[$source];
+        }
+        return 0;
+    }
+
+    /**
+     * @param string $source название источника событий
+     *
+     * @return float среднее время выполнения зафиксированных событий (0 - если событий не было)
+     */
+    public function getAvgTime($source) {
+        if (array_key_exists($source, $this->counts)) {
+            return $this->times[$source] / $this->counts[$source];
+        }
+        return 0;
     }
 }
