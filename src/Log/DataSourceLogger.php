@@ -37,6 +37,7 @@ class DataSourceLogger {
         $this->entries = [];
         $this->counts = [];
         $this->times = [];
+        $this->verbose = $verbose;
     }
     
     /**
