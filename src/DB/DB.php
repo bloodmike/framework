@@ -50,9 +50,10 @@ class DB extends mysqli {
      * @var boolean Выбрасывать исключение в случае ошибки выполнения запроса
      */
     public $throwOnError = true;
-    
+
     /**
      * @param array $config
+     * @param DataSourceLogger $dataSourceLogger
      */
     public function __construct(array $config, DataSourceLogger $dataSourceLogger) {
         parent::mysqli($config['host'], $config['user'], $config['password'], $config['name']);
@@ -390,16 +391,13 @@ class DB extends mysqli {
         $ts = microtime(true);
         $r = parent::query($query, $resultmode);
         $this->lastQuery = $query;
-        
-		if ($this->logging) {
-            $this->dataSourceLogger->add(
-                    'mysql',
-                    $ts, 
-                    $query, 
-                    ($r instanceof mysqli_result) ? $r->num_rows : $this->affected_rows, 
-                    $this->errno, 
-                    $this->error);
-		}
+        $this->dataSourceLogger->add(
+                'mysql',
+                $ts,
+                $query,
+                ($r instanceof mysqli_result) ? $r->num_rows : $this->affected_rows,
+                $this->errno,
+                $this->error);
         
         if ($r === false) {
             throw new RuntimeException($this->error);
@@ -449,5 +447,15 @@ class DB extends mysqli {
             $string = str_replace(array("_", "%"), array('\\_', '\\%'), $string);
         }
         return parent::real_escape_string($string);
+    }
+
+    /**
+     * @param $string
+     * @param bool|false $forLike
+     *
+     * @return string то же самое, что real_escape_string
+     */
+    public function esc($string, $forLike = false) {
+        return $this->real_escape_string($string, $forLike);
     }
 }

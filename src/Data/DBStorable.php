@@ -90,8 +90,8 @@ abstract class DBStorable {
      *
      * @param String $name имя поля
      * @param DB $db
-     * 
-     * @return String строка с сериализованными данными, должна правильно восстанавливаться методом fetchKey
+     *
+     * @return string строка с сериализованными данными, должна правильно восстанавливаться методом fetchKey
      */
     public function serializeVar($name, DB $db) {
         if (is_array($this->$name)) {

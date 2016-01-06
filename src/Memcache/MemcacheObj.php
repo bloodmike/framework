@@ -12,7 +12,6 @@ use RuntimeException;
  * @author mkoshkin
  */
 class MemcacheObj extends Memcache {
-    
     /**
      * @var DataSourceLogger 
      */
@@ -20,6 +19,7 @@ class MemcacheObj extends Memcache {
     
     /**
      * @param array $config
+     * @param DataSourceLogger $dataSourceLogger
      */
     public function __construct($config, DataSourceLogger $dataSourceLogger) {
         $host = $config['host'];
@@ -27,7 +27,6 @@ class MemcacheObj extends Memcache {
         if (array_key_exists('port', $config)) {
             $port = $config['port'];
         }
-        
         if (!$this->connect($host, $port)) {
             throw new RuntimeException('Не удалось подключиться к memcached');
         }
@@ -45,11 +44,11 @@ class MemcacheObj extends Memcache {
     public function increment($key, $value = 1) {
         $microtimeFrom = microtime(true);
         $result = parent::increment($key, $value);
-        
+
         $this->dataSourceLogger->add(
-                'memcache', 
-                $microtimeFrom, 
-                'Increment [' . $key . '] on [' . $value . ']', 
+                'memcache',
+                $microtimeFrom,
+                'Increment [' . $key . '] on [' . $value . ']',
                 $result, 0, '');
         
         return $result;
@@ -64,13 +63,13 @@ class MemcacheObj extends Memcache {
     public function decrement($key, $value = 1) {
         $microtimeFrom = microtime(true);
         $result = parent::decrement($key, $value);
-        
+
         $this->dataSourceLogger->add(
-                'memcache', 
-                $microtimeFrom, 
-                'Decrement [' . $key . '] on [' . $value . ']', 
+                'memcache',
+                $microtimeFrom,
+                'Decrement [' . $key . '] on [' . $value . ']',
                 $result, 0, '');
-        
+
         return $result;
     }
 
@@ -106,11 +105,11 @@ class MemcacheObj extends Memcache {
         $microtimeFrom = microtime(true);
         $result = parent::set($key, $value, $flag, $expire);
         $this->dataSourceLogger->add(
-                'memcache', 
-                $microtimeFrom, 
-                'Set [' . $key . '] to [' . $value . ']' . (($expire > 0) ? ' for [' . $expire . '] seconds' : ''), 
+                'memcache',
+                $microtimeFrom,
+                'Set [' . $key . '] to [' . $value . ']' . (($expire > 0) ? ' for [' . $expire . '] seconds' : ''),
                 $result, 0, '');
-        
+
         return $result;
     }
     
@@ -123,11 +122,11 @@ class MemcacheObj extends Memcache {
         $microtimeFrom = microtime(true);
         $result = parent::get($key);
         $this->dataSourceLogger->add(
-                'memcache', 
-                $microtimeFrom, 
-                'Get [' . (is_array($key) ? implode(', ', $key) : $key) . ']', 
+                'memcache',
+                $microtimeFrom,
+                'Get [' . (is_array($key) ? implode(', ', $key) : $key) . ']',
                 count($result), 0, '');
-        
+
         return $result;
     }
 }
