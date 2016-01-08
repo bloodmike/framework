@@ -330,6 +330,32 @@ class DB extends mysqli {
     }
 
     /**
+     * @param DBStorable $DBStorable
+     *
+     * @return string[]
+     */
+    public function getInsertNames(DBStorable $DBStorable) {
+        $insertNames = [];
+        foreach ($DBStorable->getVars() as $var) {
+            $insertNames[] = "`" . $var . "`";
+        }
+        return $insertNames;
+    }
+
+    /**
+     * @param DBStorable $DBStorable
+     *
+     * @return string
+     */
+    public function getInsertRow(DBStorable $DBStorable) {
+        $insertVars = [];
+        foreach ($DBStorable->getVars() as $var) {
+            $insertVars[] = $DBStorable->serializeVar($var, $this);
+        }
+        return "(" . implode(',', $insertVars) . ")";
+    }
+
+    /**
      * Изменить у указанного объекта значения числовых полей и сохранить изменения в базу.
      * @param   DBStorable  $object объект
      * @param   array       $fields массив изменений: в ключах - имена полей, в значениях - дельты, накладываемые на значения полей
