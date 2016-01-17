@@ -142,7 +142,7 @@ class Context {
      * @return string
      */
     public function getTrimmedString($field, $characterMask = " \t\n\r\0\x0B") {
-        return trim($this->getString($field, $characterMask));
+        return trim($this->getString($field), $characterMask);
     }
     
     /**
