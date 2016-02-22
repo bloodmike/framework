@@ -22,7 +22,14 @@ class Config {
     public function __construct(array $config) {
         $this->config = $config;
     }
-    
+
+    /**
+     * @return array
+     */
+    public function getData() {
+        return $this->config;
+    }
+
     /**
      * @param string $parameter имя параметра; для получения части параметра-массива, нужно разделять имена полей точками
      * 

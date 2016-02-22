@@ -15,25 +15,25 @@ class Container {
     /**
      * @var Config массив с конфигурацией инстанса
      */
-    private $Config;
+    protected $Config;
     
     /**
      * @var array массив с конфигурацией сервисов, доступных через контейнер
      */
-    private $services;
+    protected $services;
     
     /**
      * @var array массив с объектами сервисов, лежащими в контейнере
      */
-    private $instances;
+    protected $instances;
     
 	/**
 	 * @var array хэшмэп с именами сервисов, которые установлены в контейнер через Container::set
 	 */
-	private $customServiceNamesMap;
+    protected $customServiceNamesMap;
 	
     /**
-     * @var Container
+     * @var static
      */
     public static $inst;
     

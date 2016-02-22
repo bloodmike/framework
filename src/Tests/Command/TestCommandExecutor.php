@@ -3,7 +3,7 @@
 namespace Framework\Tests\Command;
 
 use Framework\Command\Command;
-use Framework\Service\Container;
+use Framework\Tests\TestContainer;
 use RuntimeException;
 
 /**
@@ -13,15 +13,15 @@ use RuntimeException;
  */
 class TestCommandExecutor {
     /**
-     * @var Container
+     * @var TestContainer
      */
-    private $Container;
+    private $TestContainer;
 
     /**
-     * @param Container $Container
+     * @param TestContainer $Container
      */
-    public function __construct(Container $Container) {
-        $this->Container = $Container;
+    public function __construct(TestContainer $Container) {
+        $this->TestContainer = $Container;
     }
 
     /**
@@ -31,7 +31,7 @@ class TestCommandExecutor {
      * @throws RuntimeException
      */
     public function execute($className, array $args = []) {
-        $Command = Command::createInstance($className, $this->Container);
+        $Command = Command::createInstance($className, $this->TestContainer);
         $Command->setArgs($args);
         $Command->runBefore();
         $Command->run();

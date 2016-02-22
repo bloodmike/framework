@@ -13,7 +13,7 @@ use PHPUnit_Framework_TestCase;
  */
 class FrameworkTestCase extends PHPUnit_Framework_TestCase {
     /**
-     * @var Container
+     * @var TestContainer
      */
     private $Container;
 
@@ -23,11 +23,11 @@ class FrameworkTestCase extends PHPUnit_Framework_TestCase {
     private $TestCommandExecutor;
 
     /**
-     * @return Container
+     * @return TestContainer
      */
     protected function getContainer() {
         if ($this->Container === null) {
-            $this->Container = Container::$inst;//new Container('test');
+            $this->Container = new TestContainer(Container::$inst);
         }
         
         return $this->Container;
