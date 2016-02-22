@@ -70,7 +70,7 @@ class ConsoleCommandExecutor {
     public function execute(array $argv) {
         try {
             $ConsoleCommandManager = new ConsoleCommandManager($argv);
-            
+
             // получаем объект команды
             $commandName = $ConsoleCommandManager->getCommandName();
             if (!$commandName) {
@@ -78,12 +78,12 @@ class ConsoleCommandExecutor {
             } elseif (!array_key_exists($commandName, $this->commandsInfo)) {
                 throw new RuntimeException('Команда [' . $commandName . '] не найдена');
             }
-            
+
             $className = $this->commandsInfo[$commandName]['class'];
 
             $this->Container->set('framework.command.executor', $this); // записываем исполнитель команд в контейнер
             $Command = Command::createInstance($className, $this->Container);
-            
+
             // получаем параметры, с которыми команда запущена
             $ArgumentsData = $ConsoleCommandManager->parseArgs($Command->getArguments());
             $Command->setArgs($ArgumentsData->getAll());

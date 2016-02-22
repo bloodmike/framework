@@ -3,6 +3,7 @@
 namespace Framework\Tests;
 
 use Framework\Service\Container;
+use Framework\Tests\Command\TestCommandExecutor;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -14,16 +15,31 @@ class FrameworkTestCase extends PHPUnit_Framework_TestCase {
     /**
      * @var Container
      */
-    private $container;
-    
+    private $Container;
+
+    /**
+     * @var TestCommandExecutor
+     */
+    private $TestCommandExecutor;
+
     /**
      * @return Container
      */
     protected function getContainer() {
-        if ($this->container === null) {
-            $this->container = Container::$inst;//new Container('test');
+        if ($this->Container === null) {
+            $this->Container = Container::$inst;//new Container('test');
         }
         
-        return $this->container;
+        return $this->Container;
+    }
+
+    /**
+     * @return TestCommandExecutor
+     */
+    protected function getCommandExecutor() {
+        if (!$this->TestCommandExecutor) {
+            $this->TestCommandExecutor = new TestCommandExecutor($this->getContainer());
+        }
+        return $this->TestCommandExecutor;
     }
 }
