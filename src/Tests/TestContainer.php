@@ -62,12 +62,13 @@ class TestContainer extends Container {
      * @return $this
      */
     public function set($name, $value) {
-        return $this->Container->set($name, $value);
+        $this->Container->set($name, $value);
+        return $this;
     }
 
     /**
      * @param string $name
-     * 
+     *
      * @return mixed
      */
     public function get($name) {
