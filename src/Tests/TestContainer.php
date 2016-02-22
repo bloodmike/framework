@@ -15,9 +15,15 @@ use \RuntimeException;
  */
 class TestContainer extends Container {
     /**
+     * @var Container
+     */
+    private $Container;
+
+    /**
      * @param Container $Container
      */
     public function __construct(Container $Container) {
+        $this->Container = $Container;
         parent::__construct('', $Container->Config->getData(), $Container->services);
     }
 
@@ -47,5 +53,31 @@ class TestContainer extends Container {
         }
 
         throw new RuntimeException('Unable get service name for mock');
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     *
+     * @return $this
+     */
+    public function set($name, $value) {
+        return $this->Container->set($name, $value);
+    }
+
+    /**
+     * @param string $name
+     * 
+     * @return mixed
+     */
+    public function get($name) {
+        return $this->Container->get($name);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function clear() {
+        $this->Container->clear();
     }
 }
