@@ -78,4 +78,17 @@ abstract class Time {
 		self::$time = null;
 		return time();
 	}
+
+	/**
+	 * @param string $time
+	 * @param null $now
+	 *
+	 * @return int
+	 */
+	public static function strtotime($time, $now = null) {
+		if ($now === null) {
+			$now = self::$time;
+		}
+		return strtotime($time, $now);
+	}
 }
