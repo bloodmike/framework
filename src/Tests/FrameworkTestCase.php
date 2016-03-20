@@ -27,10 +27,19 @@ class FrameworkTestCase extends PHPUnit_Framework_TestCase {
      */
     protected function getContainer() {
         if ($this->Container === null) {
-            $this->Container = new TestContainer(Container::$inst);
+            $this->Container = $this->initContainer();
         }
         
         return $this->Container;
+    }
+
+    /**
+     * Создает тестовый контейнер. Выполняется один раз при первом запросе контейнера.
+     *
+     * @return TestContainer
+     */
+    protected function initContainer() {
+        return new TestContainer(Container::$inst);
     }
 
     /**
