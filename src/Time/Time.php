@@ -33,7 +33,12 @@ abstract class Time {
 	 * @var int|null "замороженное" время в миллисекундах или null, если время не заморожено
 	 */
 	private static $time = null;
-	
+
+	/**
+	 * @var bool режим "бессонницы": при включении режима инструкции usleep игнорируются
+	 */
+	private static $insomnia = false;
+
 	/**
 	 * @param int $round если требуется округлять полученное время, нужно передать количество секунд на округление
 	 *
@@ -90,5 +95,28 @@ abstract class Time {
 			$now = self::$time;
 		}
 		return strtotime($time, $now);
+	}
+
+	/**
+	 * @param int $microSeconds
+	 */
+	public static function usleep($microSeconds) {
+		if (!self::$insomnia) {
+			usleep($microSeconds);
+		}
+	}
+
+	/**
+	 * Включить "бессонницу"
+	 */
+	public static function enableInsomnia() {
+		self::$insomnia = true;
+	}
+
+	/**
+	 * Выключить "бессонницу"
+	 */
+	public static function disableInsomnia() {
+		self::$insomnia = false;
 	}
 }
