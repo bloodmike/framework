@@ -56,7 +56,7 @@ class DB extends mysqli {
      * @param DataSourceLogger $dataSourceLogger
      */
     public function __construct(array $config, DataSourceLogger $dataSourceLogger) {
-        parent::mysqli($config['host'], $config['user'], $config['password'], $config['name']);
+        parent::__construct($config['host'], $config['user'], $config['password'], $config['name']);
         $this->set_charset('utf8');
         $this->dataSourceLogger = $dataSourceLogger;
     }
