@@ -77,7 +77,18 @@ class ConsoleCommandExecutor {
             if (!$commandName) {
                 $commandName = 'list';
             } elseif (!array_key_exists($commandName, $this->commandsInfo)) {
-                throw new RuntimeException('Команда [' . $commandName . '] не найдена');
+                $matchingCommands = [];
+                foreach (array_keys($this->commandsInfo) as $commandInfoName) {
+                    if (strpos($commandInfoName, $commandName) === 0) {
+                        $matchingCommands[] = PHP_EOL . $commandInfoName;
+                    }
+                }
+                $postfix = "";
+                if (count($matchingCommands)) {
+                    $postfix = ", возможно, вы имели в виду:" . implode('', $matchingCommands);
+                }
+                echo 'Команда [' . $commandName . '] не найдена' . $postfix . PHP_EOL;
+                return;
             }
 
             $className = $this->commandsInfo[$commandName]['class'];
