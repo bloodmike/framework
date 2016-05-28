@@ -118,6 +118,22 @@ abstract class ArrayHelper {
         
         return true;
     }
+
+    /**
+     * @param array& $to
+     * @param string $field
+     * @param int|float $value
+     *
+     * @return int|float
+     */
+	public function increment(array &$to, $field, $value = 1) {
+        if (array_key_exists($field, $to)) {
+            $to[$field] += $value;
+        } else {
+            $to[$field] = $value;
+        }
+        return $to[$field];
+    }
     
 	/**
 	 * @param array $from массив
