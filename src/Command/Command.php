@@ -188,4 +188,11 @@ abstract class Command {
         
         return new $className($Container, []);
     }
+
+    /**
+     * @return Context
+     */
+    public function getContext() {
+        return $this->context;
+    }
 }

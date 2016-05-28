@@ -5,6 +5,7 @@ namespace Framework\Command\Console;
 use Exception;
 use Framework\Command\Actual\CreateCrontabCommand;
 use Framework\Command\Actual\ListCommand;
+use Framework\Command\Argument;
 use Framework\Command\Command;
 use Framework\Service\Container;
 use RuntimeException;
@@ -85,11 +86,47 @@ class ConsoleCommandExecutor {
             $Command = Command::createInstance($className, $this->Container);
 
             // получаем параметры, с которыми команда запущена
-            $ArgumentsData = $ConsoleCommandManager->parseArgs($Command->getArguments());
+            $Arguments = $Command->getArguments();
+            $ArgumentsData = $ConsoleCommandManager->parseArgs($Arguments);
             $Command->setArgs($ArgumentsData->getAll());
-            $Command->runBefore();
-            $Command->run();
-            $Command->runAfter();
+            if ($Command->getContext()->getBoolean(Argument::HELP_NAME)) {
+                $description = $Command->getDescription();
+                $s = PHP_EOL;
+                if ($description) {
+                    $s .= $description . PHP_EOL;
+                }
+                $argsStr = '';
+                foreach ($Arguments as $Argument) {
+                    $longName = $Argument->getName();
+                    if ($longName == Argument::HELP_NAME) {
+                        continue;
+                    }
+                    $longName = $longName ? '--' . $longName : '';
+                    $shortName = $Argument->getShortName();
+                    $shortName = $shortName ? '-' . $shortName : '';
+                    $hasValue = $Argument->getHasValue();
+                    $argumentDescription = $Argument->getDescription();
+                    $argsStr .= "\t".$longName . ($longName && $shortName ? '/' : '') . $shortName;
+                    if ($hasValue) {
+                        $argsStr .= "\t" . 'VALUE';
+                    } else {
+                        $argsStr .= "\t";
+                    }
+
+                    if ($argumentDescription) {
+                        $argsStr .= "\t" . $argumentDescription;
+                    }
+                    $argsStr .= PHP_EOL;
+                }
+                if ($argsStr) {
+                    $s .= PHP_EOL . 'Параметры:' . PHP_EOL;
+                }
+                echo $s, $argsStr, PHP_EOL;
+            } else {
+                $Command->runBefore();
+                $Command->run();
+                $Command->runAfter();
+            }
 
         } catch (Exception $Exception) {
             echo "[" . get_class($Exception) . "] " . $Exception->getMessage() . PHP_EOL;
