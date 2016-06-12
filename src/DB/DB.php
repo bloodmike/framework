@@ -126,20 +126,27 @@ class DB extends mysqli {
      * Получить все данные запроса в виде списка массивов
      * @param   string          $query      запрос
      * @param   string          $keyColumn  имя поля таблицы для получения ключей (если нужно вместо списка вернуть ассоциативный массив с ключами из определенного столбца таблицы)
+     * @param   bool            $removeKeyColumn нужно ли удалять ключевое поле из строки перед добавлением
+     *
      * @return  array   список / ассоциативный массив с данными запроса 
      */
-    public function fetchAll($query, $keyColumn = '') {
+    public function fetchAll($query, $keyColumn = '', $removeKeyColumn = false) {
         $r = $this->select($query);
         $result = array();
-        
-        for ($i = 0; $i < $r->num_rows; $i++) {
-            $row = $r->fetch_assoc();
-            if ($keyColumn == '') {
-                $result[] = $row;
-			}
-            else {
-                $result[$row[$keyColumn]] = $row;
-			}
+
+        if ($keyColumn == '') {
+            for ($i = 0; $i < $r->num_rows; $i++) {
+                $result[] = $r->fetch_assoc();
+            }
+        } else {
+            for ($i = 0; $i < $r->num_rows; $i++) {
+                $row = $r->fetch_assoc();
+                $key = $row[$keyColumn];
+                if ($removeKeyColumn) {
+                    unset($row[$key]);
+                }
+                $result[$key] = $row;
+            }
         }
         
         return $result;
