@@ -143,7 +143,7 @@ class DB extends mysqli {
                 $row = $r->fetch_assoc();
                 $key = $row[$keyColumn];
                 if ($removeKeyColumn) {
-                    unset($row[$key]);
+                    unset($row[$keyColumn]);
                 }
                 $result[$key] = $row;
             }
