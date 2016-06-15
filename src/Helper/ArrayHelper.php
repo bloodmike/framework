@@ -78,7 +78,7 @@ abstract class ArrayHelper {
 				$pointer[$fieldName] = [];
 			}
 			
-            if ($index == count($field) - 1) {
+            if ($index++ == count($field) - 1) {
                 $pointer[$fieldName] = $value;
             } else {
                 $pointer =& $pointer[$fieldName];
