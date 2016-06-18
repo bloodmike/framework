@@ -163,4 +163,11 @@ class Context {
     public function exists($field) {
         return array_key_exists($field, $this->data);
     }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty() {
+        return !count($this->data);
+    }
 }
