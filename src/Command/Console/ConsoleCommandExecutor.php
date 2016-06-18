@@ -8,7 +8,6 @@ use Framework\Command\Actual\ListCommand;
 use Framework\Command\Argument;
 use Framework\Command\Command;
 use Framework\Service\Container;
-use RuntimeException;
 
 /**
  * Исполнитель консольных команд.
@@ -38,9 +37,9 @@ class ConsoleCommandExecutor {
             'framework:crontab:create' => [ // команда для сборки crontab'а проекта
                 'class' => CreateCrontabCommand::class
             ],
-            'framework:check:services' => [ // команда для проверки валидности списка сервисов
+            /*'framework:check:services' => [ // команда для проверки валидности списка сервисов
                 'class' => CreateCrontabCommand::class,
-            ],
+            ],*/
             'list' => [ // команда для вывода списка команд
                 'class' => ListCommand::class
             ],

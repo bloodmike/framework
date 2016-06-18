@@ -121,20 +121,39 @@ abstract class ArrayHelper {
 
     /**
      * @param array& $to
-     * @param string $field
+     * @param string|string[] $field
      * @param int|float $value
      *
      * @return int|float
      */
 	public static function increment(array &$to, $field, $value = 1) {
-        if (array_key_exists($field, $to)) {
-            $to[$field] += $value;
+        if (is_array($field)) {
+            $i = 0;
+            $n = count($field);
+            if ($n) {
+                $pointer =& $to;
+                foreach ($field as $fieldName) {
+                    if ($i++ < $n - 1) {
+                        if (!array_key_exists($fieldName, $pointer) || !is_array($pointer[$fieldName])) {
+                            $pointer[$fieldName] = [];
+                        }
+                        $pointer =& $pointer[$fieldName];
+                    } else {
+                        return ArrayHelper::increment($pointer, $fieldName, $value);
+                    }
+                }
+            }
+            return 0;
         } else {
-            $to[$field] = $value;
+            if (array_key_exists($field, $to)) {
+                $to[$field] += $value;
+            } else {
+                $to[$field] = $value;
+            }
         }
         return $to[$field];
     }
-    
+
 	/**
 	 * @param array $from массив
 	 * @param string|string[] $field поле/список вложенных полей
