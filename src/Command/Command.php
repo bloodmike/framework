@@ -6,6 +6,7 @@ use Framework\Context;
 use Framework\Service\Container;
 use InvalidArgumentException;
 use RuntimeException;
+use Framework\Command\Console\ConsoleCommandExecutor;
 
 /**
  * Консольная команда
@@ -42,7 +43,14 @@ abstract class Command {
      * @var Context контекст с параметрами команды
      */
     protected $context;
-    
+
+    /**
+     * @return ConsoleCommandExecutor
+     */
+    protected function getExecutor() {
+        return $this->Container->get('framework.command.executor');
+    }
+
     /**
      * @param Container $Container контейнер зависимостей
      * @param array $args аргументы

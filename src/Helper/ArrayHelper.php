@@ -126,7 +126,7 @@ abstract class ArrayHelper {
      *
      * @return int|float
      */
-	public function increment(array &$to, $field, $value = 1) {
+	public static function increment(array &$to, $field, $value = 1) {
         if (array_key_exists($field, $to)) {
             $to[$field] += $value;
         } else {

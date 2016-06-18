@@ -38,6 +38,9 @@ class ConsoleCommandExecutor {
             'framework:crontab:create' => [ // команда для сборки crontab'а проекта
                 'class' => CreateCrontabCommand::class
             ],
+            'framework:check:services' => [ // команда для проверки валидности списка сервисов
+                'class' => CreateCrontabCommand::class,
+            ],
             'list' => [ // команда для вывода списка команд
                 'class' => ListCommand::class
             ],

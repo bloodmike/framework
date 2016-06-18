@@ -14,13 +14,6 @@ use Framework\Helper\ArrayHelper;
  */
 class ListCommand extends Command {
     /**
-     * @return ConsoleCommandExecutor
-     */
-    protected function getExecutor() {
-        return $this->Container->get('framework.command.executor');
-    }
-
-    /**
      * @inheritdoc
      */
     public function configure() {

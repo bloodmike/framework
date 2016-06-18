@@ -74,9 +74,12 @@ class Container {
 
     /**
      * Очищает контейнер от всех объектов
+     *
+     * @return $this
      */
     public function clear() {
         $this->instances = array();
+        return $this;
     }
 	
 	/**

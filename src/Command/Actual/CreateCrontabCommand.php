@@ -15,14 +15,6 @@ use Framework\Helper\ArrayHelper;
  * @author mkoshkin
  */
 class CreateCrontabCommand extends Command {
-
-    /**
-     * @return ConsoleCommandExecutor
-     */
-    protected function getExecutor() {
-        return $this->Container->get('framework.command.executor');
-    }
-
     /**
      * @inheritdoc
      */
