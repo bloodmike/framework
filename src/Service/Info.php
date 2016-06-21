@@ -52,6 +52,8 @@ class Info {
     
     /**
      * @param array $info
+     *
+     * @throws InvalidArgumentException
      */
     public function __construct($info) {
         if (!is_array($info)) {
@@ -70,8 +72,7 @@ class Info {
         $this->arguments = array();
         if (!is_array($info[self::FIELD_ARGS])) {
             $this->arguments = [$info[self::FIELD_ARGS]];
-        }
-        else {
+        } else {
             $this->arguments = $info[self::FIELD_ARGS];
         }
         

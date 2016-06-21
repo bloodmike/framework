@@ -216,4 +216,11 @@ class Container {
         $this->instances[$name] = $value;
         return $this;
     }
+
+    /**
+     * @return array данные о сервисах проекта
+     */
+    public function getServicesInfo() {
+        return $this->services;
+    }
 }

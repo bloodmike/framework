@@ -4,6 +4,7 @@ namespace Framework\Command\Console;
 
 use Exception;
 use Framework\Command\Actual\CreateCrontabCommand;
+use Framework\Command\Actual\CheckServicesCommand;
 use Framework\Command\Actual\ListCommand;
 use Framework\Command\Argument;
 use Framework\Command\Command;
@@ -37,9 +38,9 @@ class ConsoleCommandExecutor {
             'framework:crontab:create' => [ // команда для сборки crontab'а проекта
                 'class' => CreateCrontabCommand::class
             ],
-            /*'framework:check:services' => [ // команда для проверки валидности списка сервисов
-                'class' => CreateCrontabCommand::class,
-            ],*/
+            'framework:services:check' => [ // команда для проверки валидности списка сервисов
+                'class' => CheckServicesCommand::class,
+            ],
             'list' => [ // команда для вывода списка команд
                 'class' => ListCommand::class
             ],
