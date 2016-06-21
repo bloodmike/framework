@@ -110,7 +110,7 @@ class InfoChecker {
             if (!$ReflectionMethod->isPublic()) {
                 throw new \InvalidArgumentException($targetClass . '::__construct is not public', self::ERROR_CONSTRUCT_ISNT_PUBLIC);
             }
-            $ReflectionClass = $ReflectionMethod->getDeclaringClass();
+            $ReflectionClass = new \ReflectionClass($targetClass);
             if ($ReflectionClass->isAbstract()) {
                 throw new \InvalidArgumentException('Class ' . $targetClass . ' is abstract', self::ERROR_CLASS_IS_ABSTRACT);
             }
