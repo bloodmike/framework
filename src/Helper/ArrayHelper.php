@@ -155,6 +155,41 @@ abstract class ArrayHelper {
     }
 
 	/**
+	 * @param array& $to
+	 * @param string|string[] $field
+	 * @param string $string
+	 *
+	 * @return string
+	 */
+	public static function append(array &$to, $field, $string) {
+		if (is_array($field)) {
+			$i = 0;
+			$n = count($field);
+			if ($n) {
+				$pointer =& $to;
+				foreach ($field as $fieldName) {
+					if ($i++ < $n - 1) {
+						if (!array_key_exists($fieldName, $pointer) || !is_array($pointer[$fieldName])) {
+							$pointer[$fieldName] = [];
+						}
+						$pointer =& $pointer[$fieldName];
+					} else {
+						return ArrayHelper::append($pointer, $fieldName, $string);
+					}
+				}
+			}
+			return 0;
+		} else {
+			if (array_key_exists($field, $to)) {
+				$to[$field] .= $string;
+			} else {
+				$to[$field] = $string;
+			}
+		}
+		return $to[$field];
+	}
+
+	/**
 	 * @param array $from массив
 	 * @param string|string[] $field поле/список вложенных полей
 	 * @param mixed $value значение элемента, который требуется удалить (null - если нужно удалить элемент полностью)

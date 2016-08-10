@@ -46,7 +46,7 @@ class CheckServicesCommand extends Command {
      */
     public function runAfter() {
         if (!$this->isOK) {
-            throw new \RuntimeException('One or more errors found on services definition');
+            throw new \RuntimeException('One or more errors found in services definition');
         }
     }
 }
