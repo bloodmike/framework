@@ -294,4 +294,18 @@ abstract class ArrayHelper {
 		}
 		return $query;
 	}
+
+	/**
+	 * @param mixed $mixed
+	 *
+	 * @return array
+	 */
+	public static function toArray($mixed) {
+		if (is_object($mixed)) {
+			return get_object_vars($mixed);
+		} elseif (!is_array($mixed)) {
+			return [$mixed];
+		}
+		return $mixed;
+	}
 }
