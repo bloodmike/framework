@@ -304,7 +304,7 @@ abstract class ArrayHelper {
 		if (is_object($mixed)) {
 			return get_object_vars($mixed);
 		} elseif (!is_array($mixed)) {
-			return [$mixed];
+			return (array)$mixed;
 		}
 		return $mixed;
 	}
