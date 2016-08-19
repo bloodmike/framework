@@ -144,7 +144,10 @@ class Container {
 					$args[] = $argName;
 				} elseif ($firstChar == '#') {
 					$args[] = mb_substr($argName, 1);
-				} else {
+				} elseif ($firstChar == '>') {
+                    // использовать файл в качестве источника параметров
+                    $args[] = require(mb_substr($argName, 1));
+                } else {
                     $args[] = $this->getParameter($argName);
                 }
             }
