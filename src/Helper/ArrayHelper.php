@@ -190,6 +190,44 @@ abstract class ArrayHelper {
 	}
 
 	/**
+	 * @param array& $to
+	 * @param string|string[] $field
+	 * @param mixed $element
+	 *
+	 * @return string
+	 */
+	public static function push(array &$to, $field, $element) {
+		if (is_array($field)) {
+			$i = 0;
+			$n = count($field);
+			if ($n) {
+				$pointer =& $to;
+				foreach ($field as $fieldName) {
+					if ($i++ < $n - 1) {
+						if (!array_key_exists($fieldName, $pointer) || !is_array($pointer[$fieldName])) {
+							$pointer[$fieldName] = [];
+						}
+						$pointer =& $pointer[$fieldName];
+					} else {
+						return ArrayHelper::push($pointer, $fieldName, $element);
+					}
+				}
+			}
+			return 0;
+		} else {
+			if (array_key_exists($field, $to)) {
+				if (!is_array($to[$field])) {
+                    $to[$field] = [];
+                }
+                $to[$field][] = $element;
+			} else {
+				$to[$field] = [$element];
+			}
+		}
+		return $to[$field];
+	}
+
+	/**
 	 * @param array $from массив
 	 * @param string|string[] $field поле/список вложенных полей
 	 * @param mixed $value значение элемента, который требуется удалить (null - если нужно удалить элемент полностью)
