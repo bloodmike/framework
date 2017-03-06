@@ -134,7 +134,29 @@ class Context {
         
         return '';
     }
-    
+
+    /**
+     * @param string $field
+     * @param string $pattern
+     *
+     * @return string строковое значение параметра, если оно соответствует переданному регулярному выражению,
+     *                  или пустую строку - если не соответствует
+     */
+    public function getMatchingString($field, $pattern) {
+        if (array_key_exists($field, $this->data)) {
+            $string = (string)$this->data[$field];
+            if ($pattern) {
+                if (preg_match($pattern, $string)) {
+                    return $string;
+                }
+            } else {
+                return $string;
+            }
+        }
+
+        return '';
+    }
+
     /**
      * @param string $field
      * @param string $characterMask
