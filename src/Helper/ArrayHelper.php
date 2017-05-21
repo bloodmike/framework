@@ -346,4 +346,31 @@ abstract class ArrayHelper {
 		}
 		return $mixed;
 	}
+
+	/**
+	 * Выбрать из исходного набора массивов все значения указанного поля
+	 *
+	 * @param array $source
+	 * @param string $field
+	 * @param bool $unique
+	 *
+	 * @return array все значения указанного поля в наборе массивов
+	 */
+	public static function fetchValues(array $source, $field, $unique = true) {
+		$result = [];
+        if ($unique) {
+            foreach ($source as $row) {
+                if (array_key_exists($field, $row)) {
+                    $result[$row[$field]] = $row[$field];
+                }
+            }
+        } else {
+            foreach ($source as $row) {
+                if (array_key_exists($field, $row)) {
+                    $result[] = $row[$field];
+                }
+            }
+        }
+        return $result;
+	}
 }
