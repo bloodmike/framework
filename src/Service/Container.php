@@ -26,6 +26,11 @@ class Container {
      * @var array массив с объектами сервисов, лежащими в контейнере
      */
     protected $instances;
+
+    /**
+     * @var array
+     */
+    protected $customServices;
     
 	/**
 	 * @var array хэшмэп с именами сервисов, которые установлены в контейнер через Container::set
