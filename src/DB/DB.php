@@ -406,7 +406,7 @@ class DB extends mysqli {
      * @param boolean $delayed <b>TRUE</b> для INSERT DELAYED
      * @return string строка с командой вставки
      */
-    private function getInsertFunction($mode, $delayed) {
+    private function getInsertFunction(int $mode, bool $delayed): string {
         if ($mode == self::MODE_REPLACE) {
             return "REPLACE " . ($delayed ? "DELAYED " : "") . "INTO ";
 		}
@@ -417,12 +417,12 @@ class DB extends mysqli {
     /**
      * Обёртка вокруг mysqli::query с логгированием.
      * @param   string                  $query запрос
-     * @param   int                     $resultmode режим выполнения запроса
+     * @param   int                     $result_mode режим выполнения запроса
      * @return  mysqli_result|boolean
      */
-    public function query($query, $resultmode = MYSQLI_STORE_RESULT) {
+    public function query(string $query, int $result_mode = MYSQLI_STORE_RESULT): mysqli_result|bool {
         $ts = microtime(true);
-        $r = parent::query($query, $resultmode);
+        $r = parent::query($query, $result_mode);
         $this->lastQuery = $query;
         $this->dataSourceLogger->add(
                 'mysql',
@@ -475,7 +475,7 @@ class DB extends mysqli {
      *
      * @return string
      */
-    public function real_escape_string($string, $forLike = false) {
+    public function real_escape_string(string $string, bool $forLike = false): string {
         if ($forLike) {
             $string = str_replace(array("_", "%"), array('\\_', '\\%'), $string);
         }

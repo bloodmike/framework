@@ -356,14 +356,14 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     /**
      * 
      */
-    private final function drawCustomHTMLBefore() {
+    private function drawCustomHTMLBefore() {
         echo implode(PHP_EOL, $this->htmlBefore);
     }
     
     /**
      * 
      */
-    private final function drawCustomHTMLAfter() {
+    private function drawCustomHTMLAfter() {
         echo implode(PHP_EOL, $this->htmlAfter);
     }
     
@@ -458,7 +458,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     /**
      * 
      */
-    private final function drawBodyAttrs() {
+    private function drawBodyAttrs() {
         $attrsLine = "";
         foreach ($this->bodyAttrs as $attr => $value) {
             if ($value != "") {
@@ -472,7 +472,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     /**
      * 
      */
-    private final function drawLinks() {
+    private function drawLinks() {
         foreach ($this->links as $linkBlock) {
             $this->drawLink($linkBlock[0], $linkBlock[1], array_key_exists(2, $linkBlock) ? $linkBlock[2] : '');
         }
@@ -538,7 +538,7 @@ abstract class HtmlResponse implements ResponseInterface, PreparableInterface {
     /**
      * 
      */
-    private final function drawMeta() {
+    private function drawMeta() {
         foreach ($this->meta as $name => $value) {
             echo '<meta name="' . $name . '" content="' . htmlspecialchars($value, ENT_COMPAT) . '"/>' . PHP_EOL;
 		}
