@@ -15,28 +15,39 @@ class MemcacheObj7 {
     /**
      * @var DataSourceLogger
      */
-    private $dataSourceLogger;
+    private DataSourceLogger $dataSourceLogger;
 
     /**
-     * @var Memcache
+     * @var ?Memcache
      */
-    private $memcache;
+    private ?Memcache $memcache = null;
+
+    /**
+     * @var array
+     */
+    private array $config;
+
+    private function getMemcache(): Memcache {
+        if (!$this->memcache) {
+            $host = $this->config['host'];
+            $port = 11211;
+            if (array_key_exists('port', $this->config)) {
+                $port = $this->config['port'];
+            }
+            $this->memcache = new Memcache();
+            if (!$this->memcache->connect($host, $port)) {
+                throw new RuntimeException('Не удалось подключиться к memcached');
+            }
+        }
+        return $this->memcache;
+    }
 
     /**
      * @param array $config
      * @param DataSourceLogger $dataSourceLogger
      */
-    public function __construct($config, DataSourceLogger $dataSourceLogger) {
-        $host = $config['host'];
-        $port = 11211;
-        if (array_key_exists('port', $config)) {
-            $port = $config['port'];
-        }
-        $this->memcache = new Memcache();
-        if (!$this->memcache->connect($host, $port)) {
-            throw new RuntimeException('Не удалось подключиться к memcached');
-        }
-
+    public function __construct(array $config, DataSourceLogger $dataSourceLogger) {
+        $this->config = $config;
         $this->dataSourceLogger = $dataSourceLogger;
     }
 
@@ -49,7 +60,7 @@ class MemcacheObj7 {
      */
     public function increment($key, $value = 1) {
         $microtimeFrom = microtime(true);
-        $result = $this->memcache->increment($key, $value);
+        $result = $this->getMemcache()->increment($key, $value);
 
         $this->dataSourceLogger->add(
             'memcache',
@@ -68,7 +79,7 @@ class MemcacheObj7 {
      */
     public function decrement($key, $value = 1) {
         $microtimeFrom = microtime(true);
-        $result = $this->memcache->decrement($key, $value);
+        $result = $this->getMemcache()->decrement($key, $value);
 
         $this->dataSourceLogger->add(
             'memcache',
@@ -89,7 +100,7 @@ class MemcacheObj7 {
      */
     public function add($key, $value, $flag = 0, $expire = 0) {
         $microtimeFrom = microtime(true);
-        $result = $this->memcache->add($key, $value, $flag, $expire);
+        $result = $this->getMemcache()->add($key, $value, $flag, $expire);
         $this->dataSourceLogger->add(
             'memcache',
             $microtimeFrom,
@@ -109,7 +120,7 @@ class MemcacheObj7 {
      */
     public function set($key, $value, $flag = 0, $expire = 0) {
         $microtimeFrom = microtime(true);
-        $result = $this->memcache->set($key, $value, $flag, $expire);
+        $result = $this->getMemcache()->set($key, $value, $flag, $expire);
         $this->dataSourceLogger->add(
             'memcache',
             $microtimeFrom,
@@ -128,7 +139,7 @@ class MemcacheObj7 {
      */
     public function get($key, &$param1 = null, &$param2 = null) {
         $microtimeFrom = microtime(true);
-        $result = $this->memcache->get($key, $param1, $param2);
+        $result = $this->getMemcache()->get($key, $param1, $param2);
         $this->dataSourceLogger->add(
             'memcache',
             $microtimeFrom,
