@@ -11,11 +11,16 @@ use RuntimeException;
  *
  * @author mkoshkin
  */
-class MemcacheObj7 extends Memcache {
+class MemcacheObj7 {
     /**
      * @var DataSourceLogger
      */
     private $dataSourceLogger;
+
+    /**
+     * @var Memcache
+     */
+    private $memcache;
 
     /**
      * @param array $config
@@ -27,7 +32,8 @@ class MemcacheObj7 extends Memcache {
         if (array_key_exists('port', $config)) {
             $port = $config['port'];
         }
-        if (!$this->connect($host, $port)) {
+        $this->memcache = new Memcache();
+        if (!$this->memcache->connect($host, $port)) {
             throw new RuntimeException('Не удалось подключиться к memcached');
         }
 
@@ -43,7 +49,7 @@ class MemcacheObj7 extends Memcache {
      */
     public function increment($key, $value = 1) {
         $microtimeFrom = microtime(true);
-        $result = parent::increment($key, $value);
+        $result = $this->memcache->increment($key, $value);
 
         $this->dataSourceLogger->add(
             'memcache',
@@ -62,7 +68,7 @@ class MemcacheObj7 extends Memcache {
      */
     public function decrement($key, $value = 1) {
         $microtimeFrom = microtime(true);
-        $result = parent::decrement($key, $value);
+        $result = $this->memcache->decrement($key, $value);
 
         $this->dataSourceLogger->add(
             'memcache',
@@ -83,7 +89,7 @@ class MemcacheObj7 extends Memcache {
      */
     public function add($key, $value, $flag = 0, $expire = 0) {
         $microtimeFrom = microtime(true);
-        $result = parent::add($key, $value, $flag, $expire);
+        $result = $this->memcache->add($key, $value, $flag, $expire);
         $this->dataSourceLogger->add(
             'memcache',
             $microtimeFrom,
@@ -103,7 +109,7 @@ class MemcacheObj7 extends Memcache {
      */
     public function set($key, $value, $flag = 0, $expire = 0) {
         $microtimeFrom = microtime(true);
-        $result = parent::set($key, $value, $flag, $expire);
+        $result = $this->memcache->set($key, $value, $flag, $expire);
         $this->dataSourceLogger->add(
             'memcache',
             $microtimeFrom,
@@ -122,7 +128,7 @@ class MemcacheObj7 extends Memcache {
      */
     public function get($key, &$param1 = null, &$param2 = null) {
         $microtimeFrom = microtime(true);
-        $result = parent::get($key, $param1, $param2);
+        $result = $this->memcache->get($key, $param1, $param2);
         $this->dataSourceLogger->add(
             'memcache',
             $microtimeFrom,
