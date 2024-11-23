@@ -144,7 +144,7 @@ class MemcacheObj7 {
             'memcache',
             $microtimeFrom,
             'Get [' . (is_array($key) ? implode(', ', $key) : $key) . ']',
-            count($result), 0, '');
+            is_array($result) ? count($result) : 0, 0, '');
 
         return $result;
     }
